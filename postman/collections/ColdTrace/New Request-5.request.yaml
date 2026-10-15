@@ -1,0 +1,8 @@
+$kind: http-request
+name: New Request
+url: "{{baseUrl}}/api/productos"
+method: POST
+body:
+  type: json
+  content: '{"nombre":"Vacuna Antigripal","tipo":"REFRIGERADO","temperaturaMinima":2,"temperaturaMaxima":8,"vidaUtilDias":30}'
+order: 6000

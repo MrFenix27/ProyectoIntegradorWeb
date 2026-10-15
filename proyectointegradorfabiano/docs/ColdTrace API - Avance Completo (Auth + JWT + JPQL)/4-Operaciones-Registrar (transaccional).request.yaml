@@ -1,0 +1,19 @@
+$kind: http-request
+url: "{{baseUrl}}/api/operaciones"
+method: POST
+headers:
+  Content-Type: application/json
+  Authorization: Bearer {{jwt}}
+body:
+  type: text
+  content: |-
+    {
+      "manifiesto": "MF-2026-001",
+      "transportista": "TransCold SAC",
+      "tipoProducto": "Vacunas / Biológicos",
+      "controlesConfirmados": ["Integridad del Sello", "Datalogger Activo"],
+      "inspector": "Ana Torres",
+      "firma": "firma-demo",
+      "evidencia": "recepcion.jpg"
+    }
+order: 14000

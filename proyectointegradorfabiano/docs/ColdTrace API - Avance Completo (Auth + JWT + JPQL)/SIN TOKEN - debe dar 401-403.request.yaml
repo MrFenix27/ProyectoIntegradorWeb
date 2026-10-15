@@ -1,0 +1,5 @@
+$kind: http-request
+name: SIN TOKEN - debe dar 401/403
+url: "{{baseUrl}}/api/productos"
+method: GET
+order: 16000

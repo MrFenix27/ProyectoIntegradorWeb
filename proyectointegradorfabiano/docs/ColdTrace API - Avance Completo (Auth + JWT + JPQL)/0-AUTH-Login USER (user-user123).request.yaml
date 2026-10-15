@@ -1,0 +1,14 @@
+$kind: http-request
+name: 0-AUTH-Login USER (user/user123)
+url: "{{baseUrl}}/api/auth/login"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "username": "user",
+      "password": "user123"
+    }
+order: 3000

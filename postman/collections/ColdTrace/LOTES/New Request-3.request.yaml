@@ -1,0 +1,8 @@
+$kind: http-request
+name: New Request
+url: "{{baseUrl}}/api/lotes"
+method: POST
+body:
+  type: json
+  content: '{"codigo":"LOTE-001","fechaVencimiento":"2026-12-31","estado":"ACTIVO","producto":{"id":1}}'
+order: 4000

@@ -1,0 +1,7 @@
+$kind: http-request
+name: New Request
+url: "{{baseUrl}}/api/lotes/vencidos?antesDe=2026-12-31"
+method: GET
+queryParams:
+  antesDe: 2026-12-31
+order: 3000

@@ -1,0 +1,5 @@
+$kind: http-request
+name: New Request
+url: "{{baseUrl}}/api/lotes/1/temperaturas/alertas"
+method: GET
+order: 2000

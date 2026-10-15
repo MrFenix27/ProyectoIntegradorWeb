@@ -1,0 +1,8 @@
+$kind: http-request
+name: New Request
+url: "\t{{baseUrl}}/api/productos/4"
+method: PUT
+body:
+  type: json
+  content: '{"nombre":"Sangre Tipo A+","tipo":"UNIDADES","temperaturaMinima":2,"temperaturaMaxima":8,"vidaUtilDias":30}'
+order: 7000

@@ -1,0 +1,13 @@
+$kind: http-request
+name: New Request
+url: "{{baseUrl}}/api/productos"
+method: GET
+auth:
+  type: inherit
+  credentials:
+    id: 3211a9db-5636-4dbb-bfd9-48a9102621e3
+scripts:
+  - type: afterResponse
+    code: ""
+    language: text/javascript
+order: 3000

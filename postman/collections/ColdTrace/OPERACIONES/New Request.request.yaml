@@ -1,0 +1,7 @@
+$kind: http-request
+url: "{{baseUrl}}/api/operaciones"
+method: POST
+body:
+  type: json
+  content: '{"manifiesto":"MAN-001","transportista":"Trans Andina","tipoProducto":"REFRIGERADO","controlesConfirmados":["SELLO","TEMPERATURA"],"inspector":"Fabiano","loteId":1}'
+order: 1000

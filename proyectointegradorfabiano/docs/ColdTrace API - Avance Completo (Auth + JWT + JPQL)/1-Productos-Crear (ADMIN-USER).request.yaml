@@ -1,0 +1,18 @@
+$kind: http-request
+name: 1-Productos-Crear (ADMIN/USER)
+url: "{{baseUrl}}/api/productos"
+method: POST
+headers:
+  Content-Type: application/json
+  Authorization: Bearer {{jwt}}
+body:
+  type: text
+  content: |-
+    {
+      "nombre": "Insulina",
+      "tipo": "Biologico",
+      "temperaturaMinima": 2.0,
+      "temperaturaMaxima": 8.0,
+      "vidaUtilDias": 30
+    }
+order: 6000

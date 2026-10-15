@@ -1,0 +1,17 @@
+$kind: http-request
+url: "{{baseUrl}}/api/operaciones/3/recepcion"
+method: PUT
+headers:
+  Content-Type: application/json
+  Authorization: Bearer {{jwt}}
+body:
+  type: text
+  content: |-
+    {
+      "temperatura": -22.5,
+      "logger": "Normal",
+      "sello": true,
+      "dano": true,
+      "firma": "firma-recepcion"
+    }
+order: 15000

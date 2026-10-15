@@ -1,0 +1,6 @@
+$kind: http-request
+url: "{{baseUrl}}/api/lotes/1/temperaturas"
+method: GET
+headers:
+  Authorization: Bearer {{jwt}}
+order: 10000

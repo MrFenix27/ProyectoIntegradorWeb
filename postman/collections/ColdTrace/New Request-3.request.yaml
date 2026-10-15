@@ -1,0 +1,7 @@
+$kind: http-request
+name: New Request
+url: "{{baseUrl}}/api/productos?tipo=REFRIGERADO"
+method: GET
+queryParams:
+  tipo: REFRIGERADO
+order: 4000

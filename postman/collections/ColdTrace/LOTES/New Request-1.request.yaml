@@ -1,0 +1,7 @@
+$kind: http-request
+name: New Request
+url: "{{baseUrl}}/api/lotes?estado=ACTIVO"
+method: GET
+queryParams:
+  estado: ACTIVO
+order: 2000

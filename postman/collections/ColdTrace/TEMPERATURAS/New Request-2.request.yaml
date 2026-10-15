@@ -1,0 +1,8 @@
+$kind: http-request
+name: New Request
+url: "{{baseUrl}}/api/lotes/1/temperaturas"
+method: POST
+body:
+  type: json
+  content: '{"temperatura":5.2,"ubicacion":"Camara 1"}'
+order: 3000

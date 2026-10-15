@@ -1,0 +1,5 @@
+$kind: http-request
+name: New Request
+url: "{{baseUrl}}/api/productos/4"
+method: DELETE
+order: 8000

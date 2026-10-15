@@ -1,0 +1,8 @@
+# Use this workspace to collaborate
+workspace:
+  id: 55052cdc-5f90-4a47-8fcf-6b4a11c8fab9
+
+localResources:
+  collections:
+    - ../proyectointegradorfabiano/docs/ColdTrace API - Avance Completo (Auth +
+      JWT + JPQL)

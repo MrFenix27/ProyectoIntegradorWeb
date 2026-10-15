@@ -1,0 +1,8 @@
+$kind: http-request
+name: New Request
+url: "{{baseUrl}}/api/operaciones/1/recepcion"
+method: PUT
+body:
+  type: json
+  content: '{"temperatura":4.5,"logger":"LOG-01","sello":true,"dano":false,"firma":"Fabiano"}'
+order: 2000
