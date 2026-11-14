@@ -230,6 +230,7 @@
   .problem .tag.causa { background: #c98a00; }
   .problem .tag.sol { background: #006e26; }
   .problem .txt { flex: 1; }
+  .nueva-pagina { break-before: page; }
 
   /* ======== Portadillas de sección ======== */
   .divider { padding-top: 40mm; }
@@ -1098,7 +1099,17 @@ cd frontend; npm run e2e        <span class="c"># navegador + capturas</span></p
 │   ├── application-mysql.yaml    datasource MySQL
 │   └── application-h2.yaml       perfil de pruebas
 ├── frontend/
-│   ├── src/app/                  componentes, servicios, guardas
+│   ├── src/app/
+│   │   ├── core/                 servicios, guardas e interceptor (singleton)
+│   │   ├── shared/models/        modelos del dominio y de autenticación
+│   │   ├── features/
+│   │   │   ├── auth/             login + auth.routes.ts
+│   │   │   ├── dashboard/        panel + dashboard.routes.ts
+│   │   │   ├── lots/             lotes, detalle + lots.routes.ts
+│   │   │   ├── logistics/        despacho/recepción + logistics.routes.ts
+│   │   │   └── traceability/     trazabilidad + traceability.routes.ts
+│   │   ├── app.routes.ts         compone las rutas de los módulos
+│   │   └── app.config.ts         router + HttpClient + interceptor
 │   ├── src/styles/               SCSS: tokens, shell, componentes, login
 │   └── e2e/                      pruebas Playwright
 └── docs/
@@ -1106,7 +1117,16 @@ cd frontend; npm run e2e        <span class="c"># navegador + capturas</span></p
     ├── INFORME-EXPOSICION.md
     └── evidencias/               12 capturas del sistema</pre>
 
-  <h3>8.4 Glosario breve</h3>
+  <h3>8.4 Estructura del frontend por módulos</h3>
+  <p>
+    El frontend se organiza en tres capas de carpetas: <code>core/</code> con los servicios
+    singleton, guardas e interceptor; <code>shared/</code> con los modelos del dominio; y
+    <code>features/</code> con un módulo por funcionalidad. Cada módulo declara sus rutas en
+    <code>&lt;modulo&gt;.routes.ts</code> y se compone en <code>app.routes.ts</code>, de modo que
+    agregar una funcionalidad no exige modificar las demás.
+  </p>
+
+  <h3 class="nueva-pagina">8.5 Glosario breve</h3>
   <table class="compact">
     <thead><tr><th style="width:22%">Término</th><th>Definición en el contexto del proyecto</th></tr></thead>
     <tbody>
