@@ -1,20 +1,22 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, forkJoin, map, of, switchMap } from 'rxjs';
-
-export interface Producto { id: number; nombre: string; tipo: string; temperaturaMinima: number; temperaturaMaxima: number; vidaUtilDias: number; }
-export interface Lote { id: number; codigo: string; fechaVencimiento: string; estado: string; producto: Producto; }
-export interface Temperatura { id: number; temperatura: number; fechaRegistro: string; ubicacion?: string; lote?: Lote; }
-export interface Operacion { id?: number; manifiesto: string; loteId?: number; transportista: string; tipoProducto: string; controlesConfirmados: string[]; inspector: string; firma?: string; evidencia?: string; fechaRegistro?: string; estado?: string; }
-export interface RecepcionData { temperatura: number; logger?: string; sello?: boolean; dano?: boolean; firma?: string; }
-export interface NuevoLote { codigo: string; fechaVencimiento: string; estado: string; producto: { id: number }; }
-export interface NuevaTemperatura { temperatura: number; ubicacion?: string; }
+import {
+  Lote,
+  NuevaTemperatura,
+  NuevoLote,
+  Operacion,
+  Producto,
+  RecepcionData,
+  Temperatura,
+} from '../../shared/models/domain.models';
 
 @Injectable({ providedIn: 'root' })
 export class ColdtraceApiService {
   private readonly http = inject(HttpClient);
   private readonly base = '/api';
   productos(): Observable<Producto[]> { return this.http.get<Producto[]>(`${this.base}/productos`); }
+  buscarProducto(id: number): Observable<Producto> { return this.http.get<Producto>(`${this.base}/productos/${id}`); }
   registrarProducto(data: Omit<Producto, 'id'>): Observable<Producto> { return this.http.post<Producto>(`${this.base}/productos`, data); }
   actualizarProducto(id: number, data: Omit<Producto, 'id'>): Observable<Producto> { return this.http.put<Producto>(`${this.base}/productos/${id}`, data); }
   eliminarProducto(id: number): Observable<void> { return this.http.delete<void>(`${this.base}/productos/${id}`); }

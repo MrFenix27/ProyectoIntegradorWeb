@@ -1,0 +1,1129 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<title>Informe técnico — ColdTrace</title>
+<style>
+  @page { size: A4; }
+
+  * { box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+    font-size: 10pt;
+    line-height: 1.55;
+    color: #1d2733;
+  }
+
+  /* ======== Tipografía ======== */
+  h1, h2, h3, h4 { color: #0b1c30; margin: 0; }
+  h1 { font-size: 21pt; font-weight: 650; letter-spacing: -0.2pt; }
+  h2 {
+    font-size: 15pt;
+    font-weight: 650;
+    margin: 0 0 4mm;
+    padding-bottom: 2.2mm;
+    border-bottom: 1.2pt solid #005ab3;
+    break-after: avoid;
+  }
+  h2 .num { color: #005ab3; margin-right: 2.5mm; }
+  h3 { font-size: 11.5pt; font-weight: 650; margin: 6mm 0 2mm; break-after: avoid; }
+  h4 { font-size: 10pt; font-weight: 650; margin: 4mm 0 1.5mm; color: #005ab3; break-after: avoid; }
+  p { margin: 0 0 3mm; text-align: justify; }
+  ul, ol { margin: 0 0 3mm; padding-left: 5mm; }
+  li { margin-bottom: 1.2mm; }
+  b, strong { font-weight: 650; }
+  a { color: #005ab3; text-decoration: none; }
+  code, .mono {
+    font-family: Consolas, "Cascadia Mono", monospace;
+    font-size: 8.6pt;
+    background: #f1f4f9;
+    padding: 0.4mm 1.2mm;
+    border-radius: 1mm;
+    color: #0b3d70;
+  }
+  pre {
+    font-family: Consolas, "Cascadia Mono", monospace;
+    font-size: 8.2pt;
+    line-height: 1.45;
+    background: #0f2137;
+    color: #d7e3f4;
+    padding: 3.5mm 4mm;
+    border-radius: 2mm;
+    margin: 2mm 0 4mm;
+    white-space: pre-wrap;
+    break-inside: avoid;
+  }
+  pre .c { color: #7f9ab8; }
+  pre .k { color: #79c0ff; }
+  pre .s { color: #a5d6a7; }
+
+  /* ======== Bloques ======== */
+  .lead { font-size: 10.5pt; color: #34445a; }
+  .muted { color: #5a6b80; }
+  .small { font-size: 8.8pt; }
+  .section { break-before: page; }
+  .avoid { break-inside: avoid; }
+  .note {
+    background: #eef4fb;
+    border-left: 3pt solid #005ab3;
+    padding: 3mm 4mm;
+    margin: 3mm 0 4mm;
+    border-radius: 0 1.5mm 1.5mm 0;
+    font-size: 9.2pt;
+    break-inside: avoid;
+  }
+  .note.warn { background: #fff8ec; border-left-color: #c98a00; }
+  .note.ok { background: #eef9f1; border-left-color: #006e26; }
+
+  table { width: 100%; border-collapse: collapse; margin: 2mm 0 4mm; font-size: 8.8pt; }
+  thead { display: table-header-group; }
+  th {
+    background: #eaf0f8;
+    color: #0b1c30;
+    text-align: left;
+    font-weight: 650;
+    padding: 2.2mm 2.4mm;
+    border-bottom: 1pt solid #b9c6d8;
+  }
+  td { padding: 2mm 2.4mm; border-bottom: 0.5pt solid #dde4ee; vertical-align: top; }
+  tbody tr:nth-child(even) td { background: #f8fafc; }
+  tr { break-inside: avoid; }
+  table.compact { font-size: 8.4pt; }
+  h4 + table { break-inside: avoid; }
+  .center { text-align: center; }
+  .nowrap { white-space: nowrap; }
+
+  /* ======== Portada ======== */
+  .cover {
+    height: 247mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .cover-hero {
+    background: linear-gradient(145deg, #0b1c30 0%, #0f2f52 55%, #005ab3 140%);
+    color: #fff;
+    border-radius: 3mm;
+    padding: 16mm 14mm 14mm;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover-hero::after {
+    content: "";
+    position: absolute;
+    right: -30mm;
+    top: -30mm;
+    width: 95mm;
+    height: 95mm;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+  }
+  .brandline { display: flex; align-items: center; gap: 3mm; margin-bottom: 14mm; }
+  .snow { width: 11mm; height: 11mm; background: #005ab3; border-radius: 1.5mm; display: flex; align-items: center; justify-content: center; }
+  .snow svg { width: 7mm; height: 7mm; }
+  .brandline b { font-size: 15pt; letter-spacing: 0.2pt; }
+  .brandline small { display: block; font-size: 6.6pt; letter-spacing: 0.18em; color: #a9c3e0; }
+  .cover h1 { color: #fff; font-size: 30pt; line-height: 1.12; margin-bottom: 4mm; }
+  .cover .sub { color: #b9d2ee; font-size: 11.5pt; max-width: 130mm; line-height: 1.45; }
+  .cover .tag {
+    display: inline-block;
+    margin-top: 8mm;
+    font-size: 7.6pt;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #cfe3fa;
+    border: 0.6pt solid rgba(207, 227, 250, 0.45);
+    padding: 1.4mm 3mm;
+    border-radius: 20mm;
+  }
+  .cover-meta { padding: 0 2mm; }
+  .cover-meta table { font-size: 9.5pt; margin: 0; }
+  .cover-meta td { padding: 2.4mm 2mm; border-bottom: 0.5pt solid #d5dde8; }
+  .cover-meta td:first-child { width: 38mm; color: #5a6b80; font-size: 8.4pt; text-transform: uppercase; letter-spacing: 0.06em; }
+  .firma { display: flex; gap: 8mm; margin-top: 10mm; }
+  .firma div { flex: 1; border-top: 0.7pt solid #8fa1b8; padding-top: 1.5mm; font-size: 8pt; color: #5a6b80; }
+
+  /* ======== Índice ======== */
+  .toc { margin-top: 2mm; }
+  .toc-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 2.2mm 0;
+    border-bottom: 0.5pt dotted #c3cede;
+    font-size: 10pt;
+  }
+  .toc-item .n { color: #005ab3; font-weight: 650; width: 12mm; }
+  .toc-item .t { flex: 1; }
+  .toc-item .d { color: #6b7c93; font-size: 8.6pt; text-align: right; flex: 0 0 62mm; }
+  .toc-item .pg { width: 11mm; text-align: right; font-weight: 650; color: #0b1c30; }
+  .toc-item.sub { font-size: 9pt; padding-left: 12mm; }
+  .toc-item.sub .d { flex-basis: 50mm; }
+  /* ======== Cifras ======== */
+  .metrics { display: flex; gap: 3mm; margin: 4mm 0 6mm; }
+  .metric {
+    flex: 1;
+    border: 0.7pt solid #ccd8e7;
+    border-top: 2.2pt solid #005ab3;
+    border-radius: 1.5mm;
+    padding: 3mm 3.5mm;
+    background: #fbfcfe;
+  }
+  .metric .l { font-size: 7.4pt; letter-spacing: 0.08em; color: #5a6b80; text-transform: uppercase; }
+  .metric .v { font-size: 17pt; font-weight: 650; color: #0b1c30; line-height: 1.2; }
+  .metric .s { font-size: 7.6pt; color: #6b7c93; }
+
+  /* ======== Diagramas ======== */
+  .arch { display: flex; align-items: stretch; gap: 3mm; margin: 4mm 0 5mm; }
+  .arch .box {
+    flex: 1;
+    border: 0.8pt solid #b9c6d8;
+    border-radius: 2mm;
+    padding: 3mm;
+    background: #fff;
+    text-align: center;
+  }
+  .arch .box b { display: block; font-size: 9pt; }
+  .arch .box small { display: block; font-size: 7.6pt; color: #5a6b80; margin-top: 1mm; }
+  .arch .box.hl { border-color: #005ab3; background: #f2f7fd; }
+  .arch .arrow { align-self: center; color: #005ab3; font-size: 15pt; font-weight: 700; }
+  .stack { display: flex; gap: 2mm; flex-wrap: wrap; margin: 2mm 0 4mm; }
+  .chip {
+    font-size: 7.8pt;
+    border: 0.6pt solid #c7d3e2;
+    background: #f6f9fd;
+    color: #2b3e55;
+    padding: 1mm 2.4mm;
+    border-radius: 20mm;
+  }
+
+  /* ======== Figuras ======== */
+  .figure { margin: 3mm 0 6mm; break-inside: avoid; }
+  .figure .shot {
+    border: 0.6pt solid #c9d5e4;
+    border-radius: 1.5mm;
+    overflow: hidden;
+    background: #fff;
+  }
+  .figure img { display: block; width: 100%; max-height: 158mm; object-fit: contain; object-position: top center; }
+  .figcap { font-size: 8.2pt; color: #5a6b80; margin-top: 1.8mm; }
+  .figcap b { color: #0b1c30; }
+  .what { font-size: 9pt; margin-top: 1mm; }
+
+  /* ======== Problemas ======== */
+  .problem { border: 0.7pt solid #d5dde8; border-radius: 2mm; padding: 3.5mm 4mm; margin-bottom: 4mm; break-inside: avoid; }
+  .problem h3 { margin: 0 0 2mm; font-size: 10.5pt; }
+  .problem .row { display: flex; gap: 3mm; margin-bottom: 1.2mm; font-size: 9pt; }
+  .problem .tag {
+    flex: 0 0 19mm;
+    font-size: 7pt;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #fff;
+    background: #6b7c93;
+    border-radius: 1mm;
+    padding: 0.8mm 1.5mm;
+    text-align: center;
+    height: 5mm;
+  }
+  .problem .tag.causa { background: #c98a00; }
+  .problem .tag.sol { background: #006e26; }
+  .problem .txt { flex: 1; }
+
+  /* ======== Portadillas de sección ======== */
+  .divider { padding-top: 40mm; }
+  .divider .kicker { font-size: 8pt; letter-spacing: 0.2em; color: #005ab3; text-transform: uppercase; }
+  .divider h2 { font-size: 24pt; border: 0; padding: 0; margin: 2mm 0 4mm; }
+  .divider p { font-size: 10.5pt; color: #4b5d73; max-width: 140mm; }
+</style>
+</head>
+<body>
+
+<!-- ==================== PORTADA ==================== -->
+<section class="cover">
+  <div class="cover-hero">
+    <div class="brandline">
+      <div class="snow">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round">
+          <path d="M12 2v20M3.3 7l17.4 10M20.7 7L3.3 17" />
+          <path d="M12 6l2.2-2.2M12 6L9.8 3.8M12 18l2.2 2.2M12 18l-2.2 2.2" />
+          <path d="M6.2 9.3l-3 .3M6.2 9.3L4.9 6.6M17.8 14.7l3-.3M17.8 14.7l1.3 2.7" />
+          <path d="M17.8 9.3l3 .3M17.8 9.3l1.3-2.7M6.2 14.7l-3 .3M6.2 14.7l-1.3 2.7" />
+        </svg>
+      </div>
+      <div>
+        <b>ColdTrace</b>
+        <small>MONITOREO DE CADENA DE FRÍO</small>
+      </div>
+    </div>
+
+    <h1>Informe técnico<br />del proyecto</h1>
+    <p class="sub">
+      Aplicación web full stack para el registro, trazabilidad y control térmico de productos
+      termosensibles. Documenta la arquitectura, el consumo de la API REST, las validaciones
+      implementadas y los problemas resueltos durante la integración.
+    </p>
+    <span class="tag">Proyecto integrador · Desarrollo web</span>
+  </div>
+
+  <div class="cover-meta">
+    <table>
+      <tr><td>Proyecto</td><td><b>ColdTrace — Monitoreo de cadena de frío</b> (WebIntegrado)</td></tr>
+      <tr><td>Grupo</td><td>Grupo N° ______________</td></tr>
+      <tr><td>Integrantes</td><td>_______________________________________________<br />_______________________________________________</td></tr>
+      <tr><td>Asignatura</td><td>Proyecto Integrador — Desarrollo Web</td></tr>
+      <tr><td>Stack</td><td>Angular 22 · Spring Boot 4.1.1 · MySQL 8.4 · JWT</td></tr>
+      <tr><td>Fecha</td><td>13 de noviembre de 2026</td></tr>
+      <tr><td>Versión</td><td>1.0 — Informe de avance final</td></tr>
+    </table>
+    <div class="firma">
+      <div>Firma integrante 1</div>
+      <div>Firma integrante 2</div>
+      <div>Firma docente</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== ÍNDICE ==================== -->
+<section class="section">
+  <h2>Contenido del informe</h2>
+  <p class="lead">El documento sigue el orden solicitado: identificación del proyecto, capturas de cada vista, consumo de la API, validaciones y problemas de integración.</p>
+
+  <div class="toc">
+    <div class="toc-item"><span class="n">1</span><span class="t">Resumen ejecutivo</span><span class="d">Alcance, stack y estado</span><span class="pg" data-sec="Resumen ejecutivo">3</span></div>
+    <div class="toc-item"><span class="n">2</span><span class="t">Arquitectura del sistema</span><span class="d">Capas, modelo de datos y seguridad</span><span class="pg" data-sec="Arquitectura del sistema">4</span></div>
+    <div class="toc-item"><span class="n">3</span><span class="t">Vistas y funcionalidades</span><span class="d">12 capturas comentadas</span><span class="pg" data-sec="Vistas y funcionalidades">5</span></div>
+    <div class="toc-item sub"><span class="n">3.1</span><span class="t">Inicio de sesión</span><span class="d">Formulario reactivo + JWT</span><span class="pg" data-sec="Inicio de sesión">6</span></div>
+    <div class="toc-item sub"><span class="n">3.2</span><span class="t">Panel principal</span><span class="d">Indicadores y alertas</span><span class="pg" data-sec="Panel principal">7</span></div>
+    <div class="toc-item sub"><span class="n">3.3</span><span class="t">Lotes y productos</span><span class="d">Lista + formularios</span><span class="pg" data-sec="Lotes y productos: lista y formularios">8</span></div>
+    <div class="toc-item sub"><span class="n">3.4</span><span class="t">Validaciones en pantalla</span><span class="d">Errores por campo</span><span class="pg" data-sec="Validaciones en pantalla">9</span></div>
+    <div class="toc-item sub"><span class="n">3.5</span><span class="t">Alta de producto</span><span class="d">POST /api/productos</span><span class="pg" data-sec="Alta de producto">10</span></div>
+    <div class="toc-item sub"><span class="n">3.6</span><span class="t">Detalle de producto</span><span class="d">GET /api/productos/:id</span><span class="pg" data-sec="Detalle de producto">11</span></div>
+    <div class="toc-item sub"><span class="n">3.7</span><span class="t">Edición</span><span class="d">PUT /api/productos/:id</span><span class="pg" data-sec="Edición de producto">12</span></div>
+    <div class="toc-item sub"><span class="n">3.8</span><span class="t">Eliminación</span><span class="d">DELETE /api/productos/:id</span><span class="pg" data-sec="Eliminación de producto">13</span></div>
+    <div class="toc-item sub"><span class="n">3.9</span><span class="t">Despacho logístico</span><span class="d">POST /api/operaciones</span><span class="pg" data-sec="Despacho logístico">14</span></div>
+    <div class="toc-item sub"><span class="n">3.10</span><span class="t">Recepción de despacho</span><span class="d">PUT /api/operaciones/:id/recepcion</span><span class="pg" data-sec="Recepción de despacho">15</span></div>
+    <div class="toc-item sub"><span class="n">3.11</span><span class="t">Trazabilidad</span><span class="d">Telemetría y cumplimiento</span><span class="pg" data-sec="Trazabilidad del lote">16</span></div>
+    <div class="toc-item sub"><span class="n">3.12</span><span class="t">Rol GUEST</span><span class="d">Solo lectura</span><span class="pg" data-sec="Rol GUEST: solo lectura">17</span></div>
+    <div class="toc-item"><span class="n">4</span><span class="t">Consumo de la API REST</span><span class="d">HttpClient, JWT y endpoints</span><span class="pg" data-sec="Consumo de la API REST">18</span></div>
+    <div class="toc-item"><span class="n">5</span><span class="t">Validaciones implementadas</span><span class="d">Reglas, mensajes y backend</span><span class="pg" data-sec="Validaciones implementadas">21</span></div>
+    <div class="toc-item"><span class="n">6</span><span class="t">Problemas de integración y soluciones</span><span class="d">8 casos documentados</span><span class="pg" data-sec="Problemas de integración y soluciones">24</span></div>
+    <div class="toc-item"><span class="n">7</span><span class="t">Estado de cumplimiento</span><span class="d">Requerimientos del avance</span><span class="pg" data-sec="Estado de cumplimiento">27</span></div>
+    <div class="toc-item"><span class="n">8</span><span class="t">Anexos</span><span class="d">Usuarios, comandos y estructura</span><span class="pg" data-sec="Anexos">29</span></div>
+  </div>
+
+  <div class="note" style="margin-top:8mm">
+    <b>Cómo leer las capturas.</b> Todas las imágenes fueron tomadas del sistema en ejecución
+    (backend en <code>localhost:8080</code> y frontend en <code>localhost:4200</code>) y se
+    regeneran automáticamente con la suite de pruebas de navegador del proyecto.
+  </div>
+</section>
+
+<!-- ==================== 1. RESUMEN ==================== -->
+<section class="section">
+  <h2><span class="num">1</span>Resumen ejecutivo</h2>
+
+  <p class="lead">
+    <b>ColdTrace</b> es una aplicación web para el control de la cadena de frío: registra productos
+    termosensibles, sus lotes y las lecturas de temperatura, y gestiona despachos y recepciones
+    con verificación de condiciones de llegada. El sistema está construido como una API REST en
+    Spring Boot consumida por una SPA en Angular, con autenticación JWT y tres roles
+    (ADMIN, USER y GUEST).
+  </p>
+
+  <div class="metrics">
+    <div class="metric"><div class="l">Vistas</div><div class="v">6</div><div class="s">login, panel, lotes, detalle, logística, trazabilidad</div></div>
+    <div class="metric"><div class="l">Endpoints</div><div class="v">17</div><div class="s">REST con roles por método</div></div>
+    <div class="metric"><div class="l">Pruebas E2E</div><div class="v">6/6</div><div class="s">Playwright sobre la app real</div></div>
+    <div class="metric"><div class="l">Tests backend</div><div class="v">5/5</div><div class="s">JUnit + Mockito</div></div>
+  </div>
+
+  <h3>Alcance funcional</h3>
+  <table class="compact">
+    <thead><tr><th style="width:30%">Módulo</th><th>Qué permite</th></tr></thead>
+    <tbody>
+      <tr><td><b>Autenticación</b></td><td>Login con JWT, sesión en <code>localStorage</code>, cierre de sesión y redirección según rol.</td></tr>
+      <tr><td><b>Panel principal</b></td><td>Indicadores de lotes, lecturas, excursiones térmicas y alertas activas, calculados con datos reales de la API.</td></tr>
+      <tr><td><b>Productos</b></td><td>Alta, listado, detalle, edición y eliminación con validación de rangos térmicos y vida útil.</td></tr>
+      <tr><td><b>Lotes y lecturas</b></td><td>Registro de lotes asociados a un producto y de lecturas de temperatura con ubicación.</td></tr>
+      <tr><td><b>Logística</b></td><td>Despacho con control de pre-enfriamiento y recepción con auditoría (temperatura, sellos, daños, firma).</td></tr>
+      <tr><td><b>Trazabilidad</b></td><td>Línea de recorrido, telemetría en vivo, cálculo de cumplimiento y exportación CSV del historial.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Stack técnico</h3>
+  <div class="stack">
+    <span class="chip">Angular 22 (standalone + signals)</span>
+    <span class="chip">TypeScript 6</span>
+    <span class="chip">SCSS (SASS)</span>
+    <span class="chip">Spring Boot 4.1.1</span>
+    <span class="chip">Java 21</span>
+    <span class="chip">Spring Data JPA / Hibernate 7.4</span>
+    <span class="chip">Spring Security + JJWT</span>
+    <span class="chip">MySQL 8.4 (Docker)</span>
+    <span class="chip">H2 (perfil de pruebas)</span>
+    <span class="chip">Playwright</span>
+  </div>
+
+  <div class="note ok">
+    <b>Estado general:</b> el proyecto cumple los seis bloques de requerimientos del avance
+    (interfaz, formularios, consumo REST, autenticación, integración y pruebas/documentación).
+    El detalle de cumplimiento se encuentra en la sección 7.
+  </div>
+</section>
+
+<!-- ==================== 2. ARQUITECTURA ==================== -->
+<section class="section">
+  <h2><span class="num">2</span>Arquitectura del sistema</h2>
+
+  <p>
+    La aplicación se organiza en tres capas desplegadas localmente. El navegador ejecuta la SPA de
+    Angular; cada acción del usuario dispara una petición HTTP a la API REST, que aplica seguridad,
+    validaciones de negocio y persiste en MySQL. La comunicación en desarrollo pasa por el
+    <i>proxy</i> de Angular, de modo que el frontend siempre llama a <code>/api</code> en su propio
+    origen y no existen problemas de CORS.
+  </p>
+
+  <div class="arch">
+    <div class="box hl"><b>Angular 22</b><small>SPA · 6 vistas<br />servicios + signals</small></div>
+    <div class="arrow">→</div>
+    <div class="box"><b>API REST</b><small>Spring Boot 4.1<br />JWT + roles</small></div>
+    <div class="arrow">→</div>
+    <div class="box"><b>JPA / Hibernate</b><small>servicios y repositorios<br />transacciones</small></div>
+    <div class="arrow">→</div>
+    <div class="box"><b>MySQL 8.4</b><small>6 tablas · utf8mb4<br />volumen Docker</small></div>
+  </div>
+
+  <h3>Modelo de datos</h3>
+  <p>
+    El dominio se compone de cinco entidades. Un <b>Producto</b> tiene muchos <b>Lotes</b>; cada lote
+    acumula <b>Registros de temperatura</b> y puede originar <b>Operaciones</b> logísticas. Las
+    operaciones guardan sus controles confirmados en una tabla de colección. Los usuarios y sus
+    roles viven en su propia tabla.
+  </p>
+  <pre>Producto 1 ──── N Lote 1 ──── N RegistroTemperatura
+                     │
+                     └──── N Operacion  (despacho / recepción)
+
+Usuario (ADMIN | USER | GUEST)</pre>
+
+  <h3>Organización del backend</h3>
+  <table class="compact">
+    <thead><tr><th style="width:26%">Paquete</th><th>Responsabilidad</th></tr></thead>
+    <tbody>
+      <tr><td><code>model</code></td><td>Entidades JPA con validaciones Bean Validation (<code>@NotBlank</code>, <code>@NotNull</code>, <code>@Positive</code>).</td></tr>
+      <tr><td><code>repository</code></td><td>Interfaces <code>JpaRepository</code> con consultas JPQL derivadas y <code>@Query</code>.</td></tr>
+      <tr><td><code>service</code></td><td>Reglas de negocio y límites transaccionales (<code>@Transactional</code>).</td></tr>
+      <tr><td><code>controller</code></td><td>Endpoints REST con <code>@PreAuthorize</code> por método.</td></tr>
+      <tr><td><code>security</code></td><td>Cadena de filtros, <code>JwtUtil</code>, <code>JwtAuthFilter</code> y <code>UserDetailsService</code>.</td></tr>
+      <tr><td><code>exception</code></td><td>Manejo uniforme de errores: 404, 400, 401, 409 con cuerpo JSON.</td></tr>
+      <tr><td><code>config</code></td><td>Datos iniciales, consola H2 (perfil <code>h2</code>) y configuración general.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Seguridad</h3>
+  <ul>
+    <li>Sesión <b>stateless</b>: no se usan cookies; cada petición viaja con <code>Authorization: Bearer &lt;token&gt;</code>.</li>
+    <li>Contraseñas cifradas con <b>BCrypt</b>; el login valida con <code>AuthenticationManager</code>.</li>
+    <li>Autorización en dos niveles: matriz de URLs en <code>SecurityConfig</code> y <code>@PreAuthorize</code> en cada endpoint.</li>
+    <li>Lectura para los tres roles; escritura para ADMIN/USER; eliminación solo para ADMIN.</li>
+  </ul>
+</section>
+
+<!-- ==================== 3. VISTAS ==================== -->
+<section class="section divider">
+  <div class="kicker">Sección 3</div>
+  <h2>Vistas y funcionalidades</h2>
+  <p>
+    A continuación se documenta cada pantalla del sistema con una captura real y la explicación de
+    lo que demuestra. El recorrido sigue el flujo de uso: autenticación, panel, gestión de
+    productos y lotes, logística, trazabilidad y perfil de solo lectura.
+  </p>
+</section>
+
+<!-- 3.1 -->
+<section class="section">
+  <h2><span class="num">3.1</span>Inicio de sesión</h2>
+  <p>
+    Pantalla pública a la que se redirige cualquier ruta protegida cuando no hay token. El
+    formulario es reactivo, valida longitud de usuario y contraseña, deshabilita el botón mientras
+    el formulario es inválido y muestra el error devuelto por la API sin recargar la página.
+    Al autenticarse, el token y el rol se guardan en <code>localStorage</code> y el usuario es
+    redirigido a su vista inicial.
+  </p>
+  <div class="figure">
+    <div class="shot"><img src="../evidencias/01-login.png" alt="Pantalla de inicio de sesión" /></div>
+    <div class="figcap"><b>Figura 1.</b> Formulario de login a pantalla completa, sin barra lateral. Incluye los usuarios de demostración.</div>
+  </div>
+  <div class="what">
+    <b>Qué demuestra:</b> componente de login, formulario reactivo con validaciones, consumo de
+    <code>POST /api/auth/login</code> y manejo de estado de autenticación.
+  </div>
+</section>
+
+<!-- 3.2 -->
+<section class="section">
+  <h2><span class="num">3.2</span>Panel principal</h2>
+  <p>
+    Vista posterior al login. Los cuatro indicadores se calculan en el cliente a partir de los lotes y
+    lecturas que entrega la API: total de lotes, lecturas registradas, excursiones térmicas y lotes
+    dentro de rango. Las alertas se generan comparando la última lectura de cada lote con el rango
+    permitido de su producto.
+  </p>
+  <div class="figure">
+    <div class="shot"><img src="../evidencias/02-dashboard-admin.png" alt="Panel principal con indicadores" /></div>
+    <div class="figcap"><b>Figura 2.</b> Panel del rol ADMIN con datos sembrados: 3 lotes, 3 lecturas y 1 excursión térmica (REAG-55 a 9,1 °C).</div>
+  </div>
+  <div class="what">
+    <b>Qué demuestra:</b> respuestas de la API visualizadas en tarjetas y tablas, cálculo de
+    indicadores derivados y sesión activa con rol visible (<code>admin / ADMIN</code>).
+  </div>
+</section>
+
+<!-- 3.3 -->
+<section class="section">
+  <h2><span class="num">3.3</span>Lotes y productos: lista y formularios</h2>
+  <p>
+    Es la vista de trabajo principal y concentra tres formularios (producto, lote y lectura de
+    temperatura) y dos tablas. El buscador del encabezado filtra en vivo por código de lote,
+    producto, estado o ubicación. Las filas con lecturas fuera de rango se resaltan y el estado se
+    muestra con un distintivo de color.
+  </p>
+  <div class="figure">
+    <div class="shot"><img src="../evidencias/05-alta-producto.png" alt="Vista de lotes y productos tras un alta" /></div>
+    <div class="figcap"><b>Figura 3.</b> Vista completa: formularios de alta, tablas de productos y de lotes, y mensaje de éxito con el ID asignado por la API.</div>
+  </div>
+  <div class="what">
+    <b>Qué demuestra:</b> componentes de lista y formulario, tablas con datos reales, mensajes de
+    resultado y actualización automática de todas las vistas tras una escritura.
+  </div>
+</section>
+
+<!-- 3.4 -->
+<section class="section">
+  <h2><span class="num">3.4</span>Validaciones en pantalla</h2>
+  <p>
+    Los formularios usan <code>ReactiveFormsModule</code> con reglas por campo y una validación
+    cruzada de rango térmico. Los errores aparecen bajo el campo afectado, el borde se marca en rojo
+    y el botón de envío permanece deshabilitado hasta que el formulario es válido.
+  </p>
+  <div class="figure">
+    <div class="shot"><img src="../evidencias/04-validaciones-formulario.png" alt="Errores de validación por campo" /></div>
+    <div class="figcap"><b>Figura 4.</b> Mensajes simultáneos: nombre obligatorio y temperatura máxima menor que la mínima (validación cruzada).</div>
+  </div>
+  <div class="what">
+    <b>Qué demuestra:</b> validaciones de requerido, longitud y rango, validación cruzada y
+    mensajes de error accesibles por campo. El detalle de reglas está en la sección 5.
+  </div>
+</section>
+
+<!-- 3.5 -->
+<section class="section">
+  <h2><span class="num">3.5</span>Alta de producto</h2>
+  <p>
+    El formulario envía <code>POST /api/productos</code> con nombre, tipo, temperaturas mínima y
+    máxima y vida útil. La API responde <code>201 Created</code> con el recurso y su ID; el frontend
+    muestra el mensaje, limpia el formulario y recarga el estado global para que todas las vistas
+    reflejen el nuevo registro.
+  </p>
+  <div class="figure">
+    <div class="shot"><img src="../evidencias/05-alta-producto.png" alt="Alta de producto con mensaje de éxito" /></div>
+    <div class="figcap"><b>Figura 5.</b> Mensaje “registrado correctamente con ID 8” y fila nueva en la tabla de productos.</div>
+  </div>
+  <div class="what">
+    <b>Qué demuestra:</b> operación de escritura completa (formulario → servicio → API → estado
+    global → tabla) y confirmación visible para el usuario.
+  </div>
+</section>
+
+<!-- 3.6 -->
+<section class="section">
+  <h2><span class="num">3.6</span>Detalle de producto</h2>
+  <p>
+    Ruta <code>/productos/:id</code>. Al pulsar <b>Ver</b> en la tabla, el componente lee el
+    parámetro de la URL y solicita <code>GET /api/productos/{id}</code>. La vista muestra la ficha
+    del producto, sus lotes con la última lectura y el porcentaje de cumplimiento térmico.
+  </p>
+  <div class="figure">
+    <div class="shot"><img src="../evidencias/06-detalle-producto.png" alt="Detalle de producto con lotes asociados" /></div>
+    <div class="figcap"><b>Figura 6.</b> Detalle del producto 1 (Vacuna Tipo A) con su lote VAX-789, temperatura 2,4 °C y 100 % de cumplimiento.</div>
+  </div>
+  <div class="what">
+    <b>Qué demuestra:</b> enrutamiento con parámetros, consumo de un endpoint de recurso individual
+    y composición de datos relacionados (producto → lotes → lecturas).
+  </div>
+</section>
+
+<!-- 3.7 -->
+<section class="section">
+  <h2><span class="num">3.7</span>Edición de producto</h2>
+  <p>
+    El botón <b>Editar</b> carga la fila en el mismo formulario de alta, cambia el título y el
+    método indicado en la cabecera, y envía <code>PUT /api/productos/{id}</code> al guardar. La
+    edición puede cancelarse y el formulario se restablece a sus valores iniciales.
+  </p>
+  <div class="figure">
+    <div class="shot"><img src="../evidencias/07-edicion-producto.png" alt="Producto editado correctamente" /></div>
+    <div class="figcap"><b>Figura 7.</b> Confirmación de actualización y nombre modificado visible en la tabla.</div>
+  </div>
+  <div class="what">
+    <b>Qué demuestra:</b> reutilización del formulario para alta y edición, envío de <code>PUT</code>
+    y refresco del listado tras la respuesta.
+  </div>
+</section>
+
+<!-- 3.8 -->
+<section class="section">
+  <h2><span class="num">3.8</span>Eliminación de producto</h2>
+  <p>
+    La eliminación se ofrece solo al rol ADMIN, coherente con el backend. Antes de ejecutar
+    <code>DELETE /api/productos/{id}</code> se pide confirmación; si el registro está referenciado
+    por lotes, la API responde <code>409 Conflict</code> y el frontend muestra el mensaje
+    correspondiente en lugar de un error técnico.
+  </p>
+  <div class="figure">
+    <div class="shot"><img src="../evidencias/08-eliminacion-producto.png" alt="Producto eliminado" /></div>
+    <div class="figcap"><b>Figura 8.</b> Mensaje de eliminación y registro retirado de la tabla.</div>
+  </div>
+  <div class="what">
+    <b>Qué demuestra:</b> operación <code>DELETE</code> con confirmación, control de permisos por rol
+    y manejo del error de integridad referencial.
+  </div>
+</section>
+
+<!-- 3.9 -->
+<section class="section">
+  <h2><span class="num">3.9</span>Despacho logístico</h2>
+  <p>
+    Formulario de operaciones: manifiesto, lote, vehículo, conductor, pre-enfriamiento y destino.
+    Envía <code>POST /api/operaciones</code> y la operación nace en estado <code>EN_TRANSITO</code>.
+    El resultado aparece de inmediato en la tabla de despachos pendientes de recepción.
+  </p>
+  <div class="figure">
+    <div class="shot"><img src="../evidencias/09-despacho-logistico.png" alt="Despacho registrado y listado en tránsito" /></div>
+    <div class="figcap"><b>Figura 9.</b> Despacho MF-E2E-6151 registrado con operación #6 y su fila en “Despachos en tránsito”.</div>
+  </div>
+  <div class="what">
+    <b>Qué demuestra:</b> formulario con campos compuestos y validación de patrón, creación de una
+    operación y visualización del estado en tablas.
+  </div>
+</section>
+
+<!-- 3.10 -->
+<section class="section">
+  <h2><span class="num">3.10</span>Recepción de despacho</h2>
+  <p>
+    La recepción se registra con <code>PUT /api/operaciones/{id}/recepcion</code> e incluye la
+    auditoría de llegada: temperatura, estado del datalogger, sellos, daños y firma. La regla de
+    negocio solo permite recepcionar operaciones <code>EN_TRANSITO</code>, que pasan a
+    <code>RECEPCIONADO</code> de forma transaccional.
+  </p>
+  <div class="figure">
+    <div class="shot"><img src="../evidencias/12-recepcion.png" alt="Recepción registrada" /></div>
+    <div class="figcap"><b>Figura 10.</b> Mensaje de recepción registrada y operación MF-INF-67577 en estado “Recepcionado” con sus controles.</div>
+  </div>
+  <div class="what">
+    <b>Qué demuestra:</b> cambio de estado mediante <code>PUT</code>, regla de negocio aplicada en el
+    servicio y trazabilidad de los controles de recepción.
+  </div>
+</section>
+
+<!-- 3.11 -->
+<section class="section">
+  <h2><span class="num">3.11</span>Trazabilidad del lote</h2>
+  <p>
+    Vista de detalle del lote: línea de recorrido (almacenamiento, despacho, tránsito, distribución),
+    telemetría en vivo cada dos segundos, estado actual, cumplimiento y exportación a CSV. Los datos
+    históricos provienen de la API; la simulación de tránsito se calcula en el cliente con una
+    reversión a la media dentro del rango permitido.
+  </p>
+  <div class="figure">
+    <div class="shot"><img src="../evidencias/11-trazabilidad.png" alt="Reporte de trazabilidad con telemetría" /></div>
+    <div class="figcap"><b>Figura 11.</b> Trazabilidad del lote VAX-789 con gráfico, estado actual, lecturas registradas y ficha del lote.</div>
+  </div>
+  <div class="what">
+    <b>Qué demuestra:</b> composición de múltiples endpoints, visualización gráfica sin librerías
+    externas, cálculo de cumplimiento y exportación de evidencia.
+  </div>
+</section>
+
+<!-- 3.12 -->
+<section class="section">
+  <h2><span class="num">3.12</span>Rol GUEST: solo lectura</h2>
+  <p>
+    Al iniciar sesión como <code>guest</code>, el usuario es redirigido a <code>/lotes</code> en lugar
+    del panel. La interfaz oculta los formularios de escritura y el módulo de logística, y las
+    acciones de eliminación no se muestran. Si intentara una escritura por API, el backend
+    respondería <code>403</code>.
+  </p>
+  <div class="figure">
+    <div class="shot"><img src="../evidencias/10-rol-guest-solo-lectura.png" alt="Vista de solo lectura para GUEST" /></div>
+    <div class="figcap"><b>Figura 12.</b> Sesión GUEST: aviso de solo lectura, sin formularios ni acceso a Logística; la consulta sigue disponible.</div>
+  </div>
+  <div class="what">
+    <b>Qué demuestra:</b> autorización por rol en frontend y backend, redirección según tipo de
+    usuario y coherencia entre la UI y las reglas de la API.
+  </div>
+</section>
+
+<!-- ==================== 4. API ==================== -->
+<section class="section">
+  <h2><span class="num">4</span>Consumo de la API REST</h2>
+
+  <p>
+    El frontend se comunica con Spring Boot exclusivamente mediante <code>HttpClient</code>. Las
+    llamadas se centralizan en dos servicios: <code>ColdtraceApiService</code>, que declara los
+    endpoints tipados, y <code>ColdtraceStoreService</code>, que mantiene el estado compartido y
+    notifica a las vistas.
+  </p>
+
+  <h3>4.1 Configuración del cliente HTTP</h3>
+  <p>
+    <code>provideHttpClient</code> registra el cliente y el interceptor funcional de autenticación.
+    El interceptor agrega el token a cada petición salvo las de <code>/api/auth</code> y evita
+    repetir la cabecera en cada servicio.
+  </p>
+  <pre><span class="c">// app.config.ts</span>
+provideHttpClient(withInterceptors([authInterceptor]))
+
+<span class="c">// auth.interceptor.ts</span>
+export const authInterceptor: HttpInterceptorFn = (req, next) =&gt; {
+  if (req.url.includes('/api/auth')) return next(req);
+
+  const token = localStorage.getItem('jwt');
+  if (token) {
+    req = req.clone({ setHeaders: { Authorization: <span class="s">`Bearer ${token}`</span> } });
+  }
+  return next(req);
+};</pre>
+
+  <h3>4.2 Servicio de API</h3>
+  <p>
+    Cada método devuelve un <code>Observable</code> tipado con la interfaz del dominio, de modo que
+    TypeScript detecta errores de forma y campos inexistentes en tiempo de compilación. La base es
+    relativa (<code>/api</code>) para que el proxy de desarrollo resuelva el destino.
+  </p>
+  <pre>@Injectable({ providedIn: 'root' })
+export class ColdtraceApiService {
+  private readonly http = inject(HttpClient);
+  private readonly base = '/api';
+
+  productos(): Observable&lt;Producto[]&gt;            { return this.http.get&lt;Producto[]&gt;(<span class="s">`${this.base}/productos`</span>); }
+  buscarProducto(id: number): Observable&lt;Producto&gt; { return this.http.get&lt;Producto&gt;(<span class="s">`${this.base}/productos/${id}`</span>); }
+  registrarProducto(data: Omit&lt;Producto,'id'&gt;)      { return this.http.post&lt;Producto&gt;(<span class="s">`${this.base}/productos`</span>, data); }
+  actualizarProducto(id: number, data)              { return this.http.put&lt;Producto&gt;(<span class="s">`${this.base}/productos/${id}`</span>, data); }
+  eliminarProducto(id: number): Observable&lt;void&gt;   { return this.http.delete&lt;void&gt;(<span class="s">`${this.base}/productos/${id}`</span>); }
+
+  lotes(): Observable&lt;Lote[]&gt;                      { return this.http.get&lt;Lote[]&gt;(<span class="s">`${this.base}/lotes`</span>); }
+  temperaturas(loteId: number)                      { return this.http.get&lt;Temperatura[]&gt;(<span class="s">`${this.base}/lotes/${loteId}/temperaturas`</span>); }
+  registrarOperacion(data: Operacion)                { return this.http.post&lt;Operacion&gt;(<span class="s">`${this.base}/operaciones`</span>, data); }
+  registrarRecepcion(id: number, data)               { return this.http.put&lt;Operacion&gt;(<span class="s">`${this.base}/operaciones/${id}/recepcion`</span>, data); }
+}</pre>
+
+  <h3>4.3 Endpoints disponibles</h3>
+  <table class="compact">
+    <thead>
+      <tr><th style="width:10%">Método</th><th style="width:38%">Ruta</th><th style="width:14%">Roles</th><th>Uso en el frontend</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><b>POST</b></td><td><code>/api/auth/login</code></td><td>Público</td><td>Formulario de login y obtención del JWT</td></tr>
+      <tr><td><b>POST</b></td><td><code>/api/auth/register</code></td><td>Público</td><td>Disponible en el servicio (no expuesto en la UI)</td></tr>
+      <tr><td><b>GET</b></td><td><code>/api/productos</code></td><td>Todos</td><td>Tabla de productos y filtros</td></tr>
+      <tr><td><b>GET</b></td><td><code>/api/productos/{id}</code></td><td>Todos</td><td>Vista de detalle <code>/productos/:id</code></td></tr>
+      <tr><td><b>POST</b></td><td><code>/api/productos</code></td><td>ADMIN, USER</td><td>Alta desde el formulario</td></tr>
+      <tr><td><b>PUT</b></td><td><code>/api/productos/{id}</code></td><td>ADMIN, USER</td><td>Edición desde el mismo formulario</td></tr>
+      <tr><td><b>DELETE</b></td><td><code>/api/productos/{id}</code></td><td>ADMIN</td><td>Eliminación con confirmación</td></tr>
+      <tr><td><b>GET</b></td><td><code>/api/lotes</code></td><td>Todos</td><td>Tabla de lotes y tablero</td></tr>
+      <tr><td><b>GET</b></td><td><code>/api/lotes/{id}</code></td><td>Todos</td><td>Detalle de lote</td></tr>
+      <tr><td><b>POST</b></td><td><code>/api/lotes</code></td><td>ADMIN, USER</td><td>Alta de lote</td></tr>
+      <tr><td><b>PUT</b></td><td><code>/api/lotes/{id}</code></td><td>ADMIN, USER</td><td>Disponible en la API (no expuesto en la UI)</td></tr>
+      <tr><td><b>DELETE</b></td><td><code>/api/lotes/{id}</code></td><td>ADMIN</td><td>Eliminación de lote y sus lecturas</td></tr>
+      <tr><td><b>GET</b></td><td><code>/api/lotes/{id}/temperaturas</code></td><td>Todos</td><td>Historial y gráfico de telemetría</td></tr>
+      <tr><td><b>POST</b></td><td><code>/api/lotes/{id}/temperaturas</code></td><td>ADMIN, USER</td><td>Registro de lectura</td></tr>
+      <tr><td><b>GET</b></td><td><code>/api/operaciones</code></td><td>Todos</td><td>Tablas de despacho y recepción</td></tr>
+      <tr><td><b>POST</b></td><td><code>/api/operaciones</code></td><td>ADMIN, USER</td><td>Registro de despacho</td></tr>
+      <tr><td><b>PUT</b></td><td><code>/api/operaciones/{id}/recepcion</code></td><td>ADMIN, USER</td><td>Recepción con auditoría</td></tr>
+    </tbody>
+  </table>
+  <p class="small muted">
+    Además existen consultas JPQL de apoyo (<code>/api/lotes/vencidos</code>,
+    <code>/api/operaciones/en-transito</code>, <code>/api/operaciones/por-fechas</code>,
+    <code>/api/lotes/{id}/temperaturas/alertas</code>) usadas para demostrar filtros en la API.
+  </p>
+
+  <h3>4.4 Flujo del token JWT</h3>
+  <ol>
+    <li>El usuario envía sus credenciales a <code>POST /api/auth/login</code>.</li>
+    <li>El backend autentica con <code>AuthenticationManager</code> y firma un token con el username, el rol y 24 h de vigencia.</li>
+    <li>El frontend guarda <code>jwt</code>, <code>username</code> y <code>rol</code> en <code>localStorage</code>.</li>
+    <li>Cada petición posterior pasa por el interceptor, que agrega <code>Bearer</code>.</li>
+    <li>El filtro del backend valida la firma, carga el usuario y aplica las reglas de rol.</li>
+    <li>Si el token falta o expira, la API responde 401/403 y la app vuelve al login.</li>
+  </ol>
+
+  <h3>4.5 Estado compartido y actualización de la interfaz</h3>
+  <p>
+    Angular 22 usa detección de cambios sin Zone.js. Para que las respuestas HTTP refresquen la
+    vista sin intervención manual, el estado global se expone con <b>signals</b>: los servicios
+    escriben en <code>signal</code> y las vistas leen con <code>computed</code>. Esa decisión fue
+    clave para resolver el problema descrito en 6.1.
+  </p>
+  <pre><span class="c">// coldtrace-store.service.ts (resumen)</span>
+private readonly lotesState = signal&lt;Lote[]&gt;([]);
+readonly lotes = this.lotesState.asReadonly();
+
+recargar(): void {
+  this.api.lotes().subscribe({
+    next: lotes =&gt; this.lotesState.set(lotes),      <span class="c">// notifica a las vistas</span>
+    error: err =&gt; this.reintentar(() =&gt; this.cargarLotes(), err)
+  });
+}</pre>
+
+  <h3>4.6 Integración en desarrollo</h3>
+  <p>
+    <code>proxy.conf.json</code> redirige <code>/api</code> al backend, por lo que el navegador no
+    necesita CORS y las rutas del frontend son las mismas en desarrollo y en producción (donde un
+    <i>reverse proxy</i> cumple ese rol).
+  </p>
+  <pre>{
+  <span class="s">"/api"</span>: { <span class="s">"target"</span>: <span class="s">"http://localhost:8080"</span>, <span class="s">"secure"</span>: false, <span class="s">"changeOrigin"</span>: true }
+}</pre>
+</section>
+
+<!-- ==================== 5. VALIDACIONES ==================== -->
+<section class="section">
+  <h2><span class="num">5</span>Validaciones implementadas</h2>
+
+  <p>
+    Las validaciones se aplican en tres capas complementarias: el formulario reactivo (experiencia
+    de usuario), el modelo del backend con Bean Validation (integridad de la API) y las reglas de
+    negocio de los servicios (por ejemplo, que la recepción solo aplique a operaciones en tránsito).
+  </p>
+
+  <h3>5.1 Reglas por formulario</h3>
+  <p class="small muted">Cada formulario declara sus reglas en el componente; los mensajes se muestran bajo el campo afectado.</p>
+
+  <h4>Inicio de sesión</h4>
+  <table class="compact">
+    <thead><tr><th style="width:26%">Campo</th><th style="width:34%">Regla</th><th>Mensaje mostrado</th></tr></thead>
+    <tbody>
+      <tr><td>Usuario</td><td>Obligatorio · 3–30 caracteres</td><td>“El usuario es obligatorio.” / “Debe tener al menos 3 caracteres.”</td></tr>
+      <tr><td>Contraseña</td><td>Obligatoria · mínimo 6</td><td>“La contraseña es obligatoria.” / “Debe tener al menos 6 caracteres.”</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Producto</h4>
+  <table class="compact">
+    <thead><tr><th style="width:26%">Campo</th><th style="width:34%">Regla</th><th>Mensaje mostrado</th></tr></thead>
+    <tbody>
+      <tr><td>Nombre</td><td>Obligatorio · 3–60 caracteres</td><td>“El nombre es obligatorio.” / “Mínimo 3 caracteres.”</td></tr>
+      <tr><td>Tipo</td><td>Obligatorio · 3–40 caracteres</td><td>“El tipo es obligatorio.” / “Máximo 40 caracteres.”</td></tr>
+      <tr><td>Temperatura mínima</td><td>Obligatoria · −60 a 40 °C</td><td>“Campo obligatorio.” / “Mínimo -60 °C.”</td></tr>
+      <tr><td>Temperatura máxima</td><td>Obligatoria · −60 a 40 °C · <b>mayor que la mínima</b></td><td>“Debe ser mayor que la temperatura mínima.”</td></tr>
+      <tr><td>Vida útil</td><td>Obligatoria · 1 a 3650 días</td><td>“Debe ser mayor que 0.” / “Máximo 3650 días.”</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Lote</h4>
+  <table class="compact">
+    <thead><tr><th style="width:26%">Campo</th><th style="width:34%">Regla</th><th>Mensaje mostrado</th></tr></thead>
+    <tbody>
+      <tr><td>Código</td><td>Obligatorio · patrón <code>^[A-Za-z0-9-]{3,20}$</code></td><td>“Usa de 3 a 20 letras, números o guiones.”</td></tr>
+      <tr><td>Fecha de vencimiento</td><td>Obligatoria</td><td>“La fecha de vencimiento es obligatoria.”</td></tr>
+      <tr><td>Estado</td><td>Obligatorio</td><td>“El estado es obligatorio.”</td></tr>
+      <tr><td>Producto</td><td>Obligatorio (selección)</td><td>“Selecciona el producto al que pertenece el lote.”</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Lectura de temperatura</h4>
+  <table class="compact">
+    <thead><tr><th style="width:26%">Campo</th><th style="width:34%">Regla</th><th>Mensaje mostrado</th></tr></thead>
+    <tbody>
+      <tr><td>Lote</td><td>Obligatorio (selección)</td><td>“Selecciona un lote para registrar la lectura.”</td></tr>
+      <tr><td>Temperatura</td><td>Obligatoria · −60 a 40 °C</td><td>“Campo obligatorio.” / “Máximo 40 °C.”</td></tr>
+      <tr><td>Ubicación</td><td>Máximo 40 caracteres</td><td>“Máximo 40 caracteres.”</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Despacho</h4>
+  <table class="compact">
+    <thead><tr><th style="width:26%">Campo</th><th style="width:34%">Regla</th><th>Mensaje mostrado</th></tr></thead>
+    <tbody>
+      <tr><td>Manifiesto</td><td>Obligatorio · patrón <code>^[A-Za-z0-9-]{3,25}$</code></td><td>“Usa de 3 a 25 letras, números o guiones.”</td></tr>
+      <tr><td>Lote</td><td>Obligatorio (selección)</td><td>“Selecciona el lote que se va a despachar.”</td></tr>
+      <tr><td>Vehículo</td><td>Obligatorio · 3–20 caracteres</td><td>“Mínimo 3 caracteres.”</td></tr>
+      <tr><td>Conductor</td><td>Obligatorio · 3–40 caracteres</td><td>“Mínimo 3 caracteres.”</td></tr>
+      <tr><td>Pre-enfriamiento</td><td>Selección obligatoria</td><td>“Indica si el pre-enfriamiento fue verificado o fallido.”</td></tr>
+      <tr><td>Destino</td><td>Obligatorio · 3–40 caracteres</td><td>“Campo obligatorio.”</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Recepción</h4>
+  <table class="compact">
+    <thead><tr><th style="width:26%">Campo</th><th style="width:34%">Regla</th><th>Mensaje mostrado</th></tr></thead>
+    <tbody>
+      <tr><td>Despacho</td><td>Obligatorio (solo en tránsito)</td><td>“Selecciona un despacho en tránsito…”</td></tr>
+      <tr><td>Temperatura</td><td>Obligatoria · −60 a 40 °C</td><td>“La temperatura de llegada es obligatoria.”</td></tr>
+      <tr><td>Datalogger</td><td>Obligatorio</td><td>—</td></tr>
+      <tr><td>Firma</td><td>Máximo 120 caracteres</td><td>“Máximo 120 caracteres.”</td></tr>
+    </tbody>
+  </table>
+
+<h3>5.2 Validación cruzada de rango térmico</h3>
+  <p>
+    Además de las reglas por campo, el formulario de producto valida la coherencia del rango. El
+    validador se aplica al grupo completo y marca el campo de temperatura máxima cuando la mínima es
+    igual o mayor.
+  </p>
+  <pre>function rangoTermico(grupo: AbstractControl): ValidationErrors | null {
+  const minima = grupo.get('temperaturaMinima')?.value;
+  const maxima = grupo.get('temperaturaMaxima')?.value;
+  if (minima === null || maxima === null || minima === '' || maxima === '') return null;
+  return Number(minima) &lt; Number(maxima) ? null : { rangoTermico: true };
+}
+
+readonly productoForm = this.fb.nonNullable.group({
+  nombre: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
+  temperaturaMinima: [2, [Validators.required, Validators.min(-60), Validators.max(40)]],
+  temperaturaMaxima: [8, [Validators.required, Validators.min(-60), Validators.max(40)]],
+  vidaUtilDias: [30, [Validators.required, Validators.min(1), Validators.max(3650)]]
+}, { validators: rangoTermico });</pre>
+
+  <h3>5.3 Comportamiento de la interfaz</h3>
+  <ul>
+    <li>El error de un campo aparece cuando el usuario lo tocó o modificó, no al abrir la vista.</li>
+    <li>El borde del campo inválido cambia de color y el mensaje se asocia visualmente a ese campo.</li>
+    <li>Los botones de envío se deshabilitan mientras el formulario es inválido o hay una petición en curso.</li>
+    <li>Al enviar, se marcan todos los campos como tocados para no ocultar errores pendientes.</li>
+  </ul>
+
+  <h3>5.4 Validación del lado del servidor</h3>
+  <p>
+    El backend valida con <code>@Valid</code> y Bean Validation en las entidades y DTO. Un
+    <code>@RestControllerAdvice</code> transforma las excepciones en respuestas JSON consistentes:
+  </p>
+  <table class="compact">
+    <thead><tr><th style="width:16%">Situación</th><th style="width:14%">HTTP</th><th>Respuesta al frontend</th></tr></thead>
+    <tbody>
+      <tr><td>Campo inválido</td><td>400</td><td><code>{ "message": "nombre: El nombre es obligatorio" }</code></td></tr>
+      <tr><td>Recurso inexistente</td><td>404</td><td><code>{ "message": "Producto no encontrado: 99" }</code></td></tr>
+      <tr><td>Credenciales erróneas</td><td>401</td><td><code>{ "message": "Usuario o contraseña incorrectos" }</code></td></tr>
+      <tr><td>Eliminar con referencias</td><td>409</td><td><code>{ "message": "No se puede eliminar: está referenciado…" }</code></td></tr>
+      <tr><td>Recepción de una operación ya cerrada</td><td>409</td><td><code>{ "message": "La operación no está EN_TRANSITO" }</code></td></tr>
+      <tr><td>Rol sin permiso</td><td>403</td><td>“Tu rol no tiene permiso para realizar esta acción.”</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <b>Evidencia:</b> la Figura 4 muestra dos validaciones activas al mismo tiempo (campo requerido
+    y rango cruzado), y la sección 3.5 muestra el flujo correcto una vez corregidos los valores.
+  </div>
+</section>
+
+<!-- ==================== 6. PROBLEMAS ==================== -->
+<section class="section">
+  <h2><span class="num">6</span>Problemas de integración y soluciones</h2>
+  <p>
+    Durante la integración aparecieron fallos que no se detectan compilando: la aplicación levantaba
+    y las peticiones respondían 200, pero la interfaz no reflejaba los datos o los permisos no
+    coincidían. Se documentan los ocho casos más relevantes con su causa y la solución aplicada.
+  </p>
+
+  <div class="problem">
+    <h3>6.1 La interfaz mostraba 0 aunque la API respondía correctamente</h3>
+    <div class="row"><span class="tag">Síntoma</span><span class="txt">El panel principal mostraba “0 lotes” y tablas vacías; en la pestaña de red todas las peticiones tenían estado 200 y el JSON era correcto.</span></div>
+    <div class="row"><span class="tag causa">Causa</span><span class="txt">Angular 22 funciona sin Zone.js (zoneless). El estado se guardaba en campos planos dentro de <code>subscribe()</code>, y esos cambios no marcan la vista como obsoleta: la detección de cambios nunca volvía a ejecutarse.</span></div>
+    <div class="row"><span class="tag sol">Solución</span><span class="txt">Se migró el estado compartido a <b>signals</b> (<code>signal</code>, <code>computed</code>, <code>toSignal</code>). Al actualizar un signal, Angular marca automáticamente las vistas que lo leen. Se verificó con los indicadores (3 lotes) y con la telemetría que se actualiza cada 2 s.</span></div>
+  </div>
+
+  <div class="problem">
+    <h3>6.2 El rol GUEST recibía 403 en operaciones y el frontend reintentaba sin fin</h3>
+    <div class="row"><span class="tag">Síntoma</span><span class="txt">Al entrar como <code>guest</code>, el panel no cargaba operaciones y el navegador repetía la petición cada 1,5 s indefinidamente.</span></div>
+    <div class="row"><span class="tag causa">Causa</span><span class="txt">Dos reglas inconsistentes: la matriz de <code>SecurityConfig</code> permitía GET solo en productos y lotes, mientras el controlador autorizaba explícitamente a GUEST en operaciones. Además, el store reintentaba ante cualquier error, incluidos 401/403.</span></div>
+    <div class="row"><span class="tag sol">Solución</span><span class="txt">Se alineó <code>SecurityConfig</code> con <code>@PreAuthorize</code> (GET de operaciones para los tres roles) y el reintento se limitó a errores de red o 5xx, ignorando los 4xx. GUEST pasó a consultar sin errores y sin tráfico repetido.</span></div>
+  </div>
+
+  <div class="problem">
+    <h3>6.3 No existía vista de detalle ni ruta por identificador</h3>
+    <div class="row"><span class="tag">Síntoma</span><span class="txt">El requerimiento de “lista, formulario y detalle” quedaba incompleto: el detalle solo era posible eligiendo un lote en un desplegable, sin URL propia ni acceso desde la tabla.</span></div>
+    <div class="row"><span class="tag causa">Causa</span><span class="txt">El frontend no consumía <code>GET /api/productos/{id}</code> y no había ruta con parámetro.</span></div>
+    <div class="row"><span class="tag sol">Solución</span><span class="txt">Se creó <code>ProductoDetalleComponent</code> en <code>/productos/:id</code>, con <code>ActivatedRoute</code>, el método <code>buscarProducto()</code> y el botón <b>Ver</b> en la tabla. La vista compone el producto con sus lotes y lecturas.</span></div>
+  </div>
+
+  <div class="problem">
+    <h3>6.4 Estilos duplicados y ausencia de SASS</h3>
+    <div class="row"><span class="tag">Síntoma</span><span class="txt">Todo el CSS se aplicaba dos veces (import global y <code>styleUrl</code> del componente) y las clases de las vistas hijas dependían de esa copia global; además el requerimiento pedía SASS y solo había CSS.</span></div>
+    <div class="row"><span class="tag causa">Causa</span><span class="txt">El archivo <code>app.css</code> se importaba desde <code>styles.css</code> y a la vez se declaraba como estilo del componente raíz, sin arquitectura de parciales.</span></div>
+    <div class="row"><span class="tag sol">Solución</span><span class="txt">Se migró a SCSS con tokens, mixins y anidamiento: <code>_tokens</code>, <code>_shell</code>, <code>_components</code> y <code>_login</code>, compilados desde <code>styles.scss</code>. Los estilos compartidos quedaron globales y el componente raíz solo conserva sus custom properties, eliminando la duplicación.</span></div>
+  </div>
+
+  <div class="problem">
+    <h3>6.5 Credenciales inválidas sin mensaje útil</h3>
+    <div class="row"><span class="tag">Síntoma</span><span class="txt">Al escribir mal la contraseña, el login no mostraba un mensaje claro y el usuario no sabía si el problema era la clave o la API caída.</span></div>
+    <div class="row"><span class="tag causa">Causa</span><span class="txt">La excepción de autenticación no estaba manejada y se traducía en una respuesta genérica del servidor.</span></div>
+    <div class="row"><span class="tag sol">Solución</span><span class="txt">Se agregó un <code>@ExceptionHandler(BadCredentialsException)</code> que responde <b>401</b> con un mensaje JSON, y el componente distingue 401/403 (“Credenciales inválidas”) de un error de conexión (“Verifica que el backend esté en localhost:8080”).</span></div>
+  </div>
+
+  <div class="problem">
+    <h3>6.6 El login aparecía dentro del layout de la aplicación</h3>
+    <div class="row"><span class="tag">Síntoma</span><span class="txt">En <code>/login</code> se veían la barra lateral y el buscador, con enlaces a vistas protegidas antes de autenticarse.</span></div>
+    <div class="row"><span class="tag causa">Causa</span><span class="txt">El componente raíz renderizaba siempre el shell (sidebar + topbar) alrededor del <code>router-outlet</code>.</span></div>
+    <div class="row"><span class="tag sol">Solución</span><span class="txt">El shell se condicionó a <code>auth.logueado</code> y se agregó la clase <code>sin-sesion</code> para anular márgenes y relleno. El login quedó a pantalla completa sin duplicar el <code>router-outlet</code>.</span></div>
+  </div>
+
+  <div class="problem">
+    <h3>6.7 Migración de H2 en memoria a MySQL</h3>
+    <div class="row"><span class="tag">Síntoma</span><span class="txt">Con H2 los datos desaparecían al reiniciar el backend, y cualquier cambio de configuración exigía recrear la base. Los tests, en cambio, no debían depender de un servidor externo.</span></div>
+    <div class="row"><span class="tag causa">Causa</span><span class="txt">La configuración usaba una única fuente de datos en memoria (<code>ddl-auto: create-drop</code>) sin perfiles.</span></div>
+    <div class="row"><span class="tag sol">Solución</span><span class="txt">MySQL 8.4 con Docker quedó como perfil por defecto (<code>spring.profiles.default: mysql</code>, <code>ddl-auto: update</code>, volumen persistente y phpMyAdmin), y se creó <code>application-h2.yaml</code> para pruebas y ejecución sin Docker. El test de contexto usa <code>@ActiveProfiles("h2")</code>, por lo que <code>mvnw test</code> sigue funcionando solo. Se verificó la persistencia creando un producto, reiniciando el backend y comprobando que seguía existiendo.</span></div>
+  </div>
+
+  <div class="problem">
+    <h3>6.8 Evidencias con barras duplicadas en las capturas</h3>
+    <div class="row"><span class="tag">Síntoma</span><span class="txt">Las capturas de página completa mostraban el sidebar y la topbar desplazados o repetidos a mitad de la imagen.</span></div>
+    <div class="row"><span class="tag causa">Causa</span><span class="txt">Los elementos con <code>position: fixed</code> se posicionan respecto del viewport; al capturar toda la página, el motor los replica en cada franja.</span></div>
+    <div class="row"><span class="tag sol">Solución</span><span class="txt">El script de evidencias inyecta CSS antes de la captura: convierte sidebar y topbar a <code>position: absolute</code> y ajusta la altura del sidebar al documento. Las 12 figuras de este informe se generaron así.</span></div>
+  </div>
+
+  <div class="note warn">
+    <b>Lección de integración.</b> Los fallos más costosos no fueron de compilación sino de
+    <i>contratos</i>: entre la detección de cambios y el estado, entre la matriz de seguridad y los
+    <code>@PreAuthorize</code>, y entre la configuración de la base y los tests. Verificar con
+    peticiones reales y pruebas de navegador permitió detectarlos y dejarlos cubiertos.
+  </div>
+</section>
+
+<!-- ==================== 7. CUMPLIMIENTO ==================== -->
+<section class="section">
+  <h2><span class="num">7</span>Estado de cumplimiento</h2>
+  <p>
+    La siguiente tabla resume los requerimientos del avance y la evidencia que los respalda. Todos
+    fueron verificados con el sistema en ejecución.
+  </p>
+
+  <table class="compact">
+    <thead><tr><th style="width:8%">#</th><th style="width:44%">Requerimiento</th><th style="width:10%">Estado</th><th>Evidencia</th></tr></thead>
+    <tbody>
+      <tr><td>1.1</td><td>Componentes de lista, formulario y detalle</td><td><b>Sí</b></td><td>Vistas 3.3 a 3.12; <code>producto-detalle.component.ts</code></td></tr>
+      <tr><td>1.2</td><td>Enrutamiento entre vistas</td><td><b>Sí</b></td><td><code>app.routes.ts</code>: 6 rutas + guardas</td></tr>
+      <tr><td>1.3</td><td>Estilos con SASS y diseño responsivo</td><td><b>Sí</b></td><td>6 archivos SCSS, tokens y mixin <code>mobile</code></td></tr>
+      <tr><td>2.1</td><td>Formulario reactivo de registro y edición</td><td><b>Sí</b></td><td>Figuras 4, 5 y 7</td></tr>
+      <tr><td>2.2</td><td>Validaciones (requeridos, formatos, longitudes)</td><td><b>Sí</b></td><td>Tabla 5.1 y validador cruzado 5.2</td></tr>
+      <tr><td>2.3</td><td>Manejo de mensajes de error</td><td><b>Sí</b></td><td>Mensajes por campo y por operación</td></tr>
+      <tr><td>3.1</td><td>Consumo con <code>HttpClient</code></td><td><b>Sí</b></td><td>Sección 4.2</td></tr>
+      <tr><td>3.2</td><td>Endpoints protegidos con JWT</td><td><b>Sí</b></td><td>Interceptor + flujo 4.4</td></tr>
+      <tr><td>3.3</td><td>GET, POST, PUT y DELETE</td><td><b>Sí</b></td><td>Tabla de endpoints 4.3</td></tr>
+      <tr><td>4.1</td><td>Formulario de login</td><td><b>Sí</b></td><td>Figura 1</td></tr>
+      <tr><td>4.2</td><td>Almacenamiento y uso del token</td><td><b>Sí</b></td><td><code>localStorage</code> + interceptor</td></tr>
+      <tr><td>4.3</td><td>Redirección por tipo de usuario o estado</td><td><b>Sí</b></td><td>Figura 12; guardas de ruta</td></tr>
+      <tr><td>5.1</td><td>API desplegada (local)</td><td><b>Sí</b></td><td>Spring Boot + MySQL en Docker</td></tr>
+      <tr><td>5.2</td><td>Comunicación frontend ↔ backend</td><td><b>Sí</b></td><td>Figuras 2, 5, 9 y 10</td></tr>
+      <tr><td>5.3</td><td>Respuestas en tablas, listas o tarjetas</td><td><b>Sí</b></td><td>Todas las vistas</td></tr>
+      <tr><td>6.1</td><td>Pruebas desde el navegador</td><td><b>Sí</b></td><td>Playwright: 6/6 pruebas</td></tr>
+      <tr><td>6.2</td><td>Evidencia del flujo completo</td><td><b>Sí</b></td><td>Figuras 1, 5, 6, 7 y 8</td></tr>
+      <tr><td>6.3</td><td>Capturas o grabación funcional</td><td><b>Sí</b></td><td>12 capturas en este informe</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Resultados de la última verificación</h3>
+  <table class="compact">
+    <thead><tr><th style="width:36%">Comprobación</th><th>Resultado</th></tr></thead>
+    <tbody>
+      <tr><td>Build de producción del frontend</td><td>Correcto — 392,58 kB (97,82 kB transferidos)</td></tr>
+      <tr><td>Pruebas de navegador (Playwright)</td><td>6/6 correctas (login, login inválido, validaciones, CRUD, despacho, GUEST)</td></tr>
+      <tr><td>Pruebas de backend (JUnit)</td><td>5/5 correctas sobre H2</td></tr>
+      <tr><td>API sin token</td><td>403</td></tr>
+      <tr><td>API con token</td><td>200 / 201 / 204 según método</td></tr>
+      <tr><td>Base de datos</td><td>MySQL 8.4.13 · 6 tablas InnoDB · utf8mb4</td></tr>
+      <tr><td>Persistencia</td><td>Verificada tras reiniciar el backend</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note ok">
+    <b>Conclusión.</b> El sistema cumple los requerimientos del avance y queda operativo de punta a
+    punta: la SPA consume la API protegida con JWT, las respuestas se reflejan en tablas y tarjetas,
+    las validaciones están activas en cliente y servidor, y el flujo completo cuenta con evidencia
+    reproducible mediante pruebas automatizadas.
+  </div>
+</section>
+
+<!-- ==================== 8. ANEXOS ==================== -->
+<section class="section">
+  <h2><span class="num">8</span>Anexos</h2>
+
+  <h3>8.1 Usuarios y permisos</h3>
+  <table class="compact">
+    <thead><tr><th style="width:20%">Usuario</th><th style="width:18%">Clave</th><th style="width:16%">Rol</th><th>Alcance</th></tr></thead>
+    <tbody>
+      <tr><td><code>admin</code></td><td><code>admin123</code></td><td>ADMIN</td><td>Consulta, alta, edición y eliminación</td></tr>
+      <tr><td><code>user</code></td><td><code>user123</code></td><td>USER</td><td>Consulta, alta y edición</td></tr>
+      <tr><td><code>guest</code></td><td><code>guest123</code></td><td>GUEST</td><td>Solo consulta</td></tr>
+    </tbody>
+  </table>
+
+  <h3>8.2 Puesta en marcha</h3>
+  <pre><span class="c"># 1) Base de datos (MySQL 8.4 + phpMyAdmin en :8081)</span>
+docker compose up -d
+
+<span class="c"># 2) Backend (http://localhost:8080)</span>
+.\mvnw.cmd spring-boot:run
+
+<span class="c"># 3) Frontend (http://localhost:4200)</span>
+cd frontend
+npm install
+npm start
+
+<span class="c"># Alternativa sin Docker: perfil H2 en memoria</span>
+.\mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=h2
+
+<span class="c"># Pruebas</span>
+.\mvnw.cmd test                 <span class="c"># backend</span>
+cd frontend; npm run e2e        <span class="c"># navegador + capturas</span></pre>
+
+  <h3>8.3 Estructura del proyecto</h3>
+  <pre>proyectointegradorfabiano/
+├── docker-compose.yml            MySQL 8.4 + phpMyAdmin
+├── pom.xml                       Spring Boot 4.1.1 / Java 21
+├── src/main/java/com/example/WebIntegrado/
+│   ├── controller/               endpoints REST
+│   ├── service/                  reglas de negocio
+│   ├── repository/               JPA + JPQL
+│   ├── model/                    entidades
+│   ├── security/                 JWT, filtros, roles
+│   ├── exception/                manejo uniforme de errores
+│   └── config/                   datos iniciales
+├── src/main/resources/
+│   ├── application.yaml          configuración común (perfil mysql por defecto)
+│   ├── application-mysql.yaml    datasource MySQL
+│   └── application-h2.yaml       perfil de pruebas
+├── frontend/
+│   ├── src/app/                  componentes, servicios, guardas
+│   ├── src/styles/               SCSS: tokens, shell, componentes, login
+│   └── e2e/                      pruebas Playwright
+└── docs/
+    ├── INFORME-AVANCE.md
+    ├── INFORME-EXPOSICION.md
+    └── evidencias/               12 capturas del sistema</pre>
+
+  <h3>8.4 Glosario breve</h3>
+  <table class="compact">
+    <thead><tr><th style="width:22%">Término</th><th>Definición en el contexto del proyecto</th></tr></thead>
+    <tbody>
+      <tr><td><b>JWT</b></td><td>Token firmado que identifica al usuario y su rol; se envía en cada petición protegida.</td></tr>
+      <tr><td><b>Signal</b></td><td>Valor reactivo de Angular que notifica a las vistas cuando cambia, sin Zone.js.</td></tr>
+      <tr><td><b>Interceptor</b></td><td>Función que transforma cada petición HTTP; aquí agrega el encabezado de autorización.</td></tr>
+      <tr><td><b>Excursión térmica</b></td><td>Lectura de temperatura fuera del rango permitido por el producto.</td></tr>
+      <tr><td><b>Lote</b></td><td>Unidad trazable de un producto, con vencimiento, estado y lecturas asociadas.</td></tr>
+      <tr><td><b>Despacho / recepción</b></td><td>Operaciones logísticas que marcan la salida y la llegada de un lote, con controles de condición.</td></tr>
+    </tbody>
+  </table>
+
+  <p class="small muted" style="margin-top:10mm">
+    Informe generado a partir del código y del sistema en ejecución. Las capturas corresponden a la
+    versión verificada el 13 de noviembre de 2026; pueden regenerarse con <code>npm run e2e</code>.
+  </p>
+</section>
+
+</body>
+</html>

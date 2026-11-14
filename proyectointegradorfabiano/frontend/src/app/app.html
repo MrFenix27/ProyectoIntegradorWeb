@@ -1,1 +1,60 @@
-<aside class="sidebar"><div class="brand"><div class="brand-icon"><span class="material-symbols-outlined">ac_unit</span></div><div><b>ColdTrace</b><small>MONITOREO DE<br>CADENA DE FRÍO</small></div></div><nav><a routerLink="/dashboard" routerLinkActive="active"><span class="material-symbols-outlined">dashboard</span>Panel principal</a><a routerLink="/lotes" routerLinkActive="active"><span class="material-symbols-outlined">inventory_2</span>Lotes</a><a routerLink="/logistica" routerLinkActive="active"><span class="material-symbols-outlined">local_shipping</span>Logística</a><a routerLink="/trazabilidad" routerLinkActive="active"><span class="material-symbols-outlined">timeline</span>Trazabilidad</a><a routerLink="/dashboard" fragment="alerts"><span class="material-symbols-outlined">warning</span>Alertas</a></nav><a class="settings" routerLink="/dashboard"><span class="material-symbols-outlined">settings</span>Configuración</a><div class="user"><span class="user-icon">CT</span><span>{{ auth.username ?? 'Invitado' }}<small>{{ auth.rol ?? 'sin sesión' }}</small></span></div><a (click)="salir()" style="cursor:pointer;margin-top:0.5rem;display:block;"><span class="material-symbols-outlined">logout</span>Salir</a></aside><div class="shell"><header class="topbar"><div class="search"><span class="material-symbols-outlined">search</span><input [ngModel]="searchTerm" (ngModelChange)="onSearch($event)" placeholder="Buscar lotes, productos u orígenes..."></div><div class="top-actions"><span class="material-symbols-outlined">notifications</span><span class="material-symbols-outlined">help</span><span class="material-symbols-outlined">apps</span><span class="user-icon">CT</span></div></header><main><router-outlet /></main></div>
+<aside class="sidebar" *ngIf="auth.logueado">
+  <div class="brand">
+    <div class="brand-icon"><span class="material-symbols-outlined">ac_unit</span></div>
+    <div>
+      <b>ColdTrace</b>
+      <small>MONITOREO DE<br />CADENA DE FRÍO</small>
+    </div>
+  </div>
+
+  <nav>
+    <a routerLink="/dashboard" routerLinkActive="active">
+      <span class="material-symbols-outlined">dashboard</span>Panel principal
+    </a>
+    <a routerLink="/lotes" routerLinkActive="active">
+      <span class="material-symbols-outlined">inventory_2</span>Lotes
+    </a>
+    <a routerLink="/logistica" routerLinkActive="active" *ngIf="auth.puedeEscribir">
+      <span class="material-symbols-outlined">local_shipping</span>Logística
+    </a>
+    <a routerLink="/trazabilidad" routerLinkActive="active">
+      <span class="material-symbols-outlined">timeline</span>Trazabilidad
+    </a>
+    <a routerLink="/dashboard" fragment="alerts">
+      <span class="material-symbols-outlined">warning</span>Alertas
+    </a>
+  </nav>
+
+  <a class="settings" routerLink="/dashboard"><span class="material-symbols-outlined">settings</span>Configuración</a>
+
+  <div class="user">
+    <span class="user-icon">CT</span>
+    <span>{{ auth.username ?? 'Invitado' }}<small>{{ auth.rol ?? 'sin sesión' }}</small></span>
+  </div>
+  <a (click)="salir()" style="cursor:pointer;margin-top:0.5rem;display:block;">
+    <span class="material-symbols-outlined">logout</span>Salir
+  </a>
+</aside>
+
+<div class="shell" [class.sin-sesion]="!auth.logueado">
+  <header class="topbar" *ngIf="auth.logueado">
+    <div class="search">
+      <span class="material-symbols-outlined">search</span>
+      <input
+        [ngModel]="searchTerm"
+        (ngModelChange)="onSearch($event)"
+        placeholder="Buscar lotes, productos u orígenes..."
+      />
+    </div>
+    <div class="top-actions">
+      <span class="material-symbols-outlined">notifications</span>
+      <span class="material-symbols-outlined">help</span>
+      <span class="material-symbols-outlined">apps</span>
+      <span class="user-icon">CT</span>
+    </div>
+  </header>
+
+  <main [class.sin-sesion]="!auth.logueado">
+    <router-outlet />
+  </main>
+</div>

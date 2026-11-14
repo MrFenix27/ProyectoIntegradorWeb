@@ -1,15 +1,14 @@
+# Perfil MySQL 8 (por defecto). Levanta la base con: docker compose up -d
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/coldtrace?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/coldtrace?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
     username: coldtrace
     password: coldtrace123
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
+      # update: conserva los datos entre reinicios y crea/ajusta el esquema
       ddl-auto: update
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
   h2:
     console:
       enabled: false

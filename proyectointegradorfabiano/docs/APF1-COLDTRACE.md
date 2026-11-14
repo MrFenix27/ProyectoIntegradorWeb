@@ -33,7 +33,7 @@ flowchart LR
     P[Postman] --> API
     API --> S[Services]
     S --> R[Repositories JPA]
-    R --> DB[(H2 en memoria)]
+    R --> DB[(MySQL 8.4)]
 ```
 
 Paquetes backend: `model`, `repository`, `service`, `controller`, `exception` y `config`. Frontend: componentes de dashboard, inventario, despachos, trazabilidad y operaciones; `ColdtraceApiService` centraliza las llamadas HTTP.
@@ -80,7 +80,7 @@ Pruebas incluidas:
 - `ProductoServiceTest`: JUnit y Mockito para registro y validación de rango térmico.
 - `OperacionServiceTest`: verifica que el servicio guarda y asigna fecha.
 - `ProductoControllerTest`: prueba HTTP con MockMvc y respuesta JSON.
-- `WebIntegradoApplicationTests`: verifica que el contexto Spring, JPA, H2 y repositorios inician.
+- `WebIntegradoApplicationTests`: verifica que el contexto Spring, JPA, la base H2 (perfil de test) y los repositorios inician.
 
 Comando:
 

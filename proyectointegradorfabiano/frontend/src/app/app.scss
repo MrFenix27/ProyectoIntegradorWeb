@@ -1,0 +1,22 @@
+// =============================================================
+// Estilos propios del componente raíz.
+// Los estilos compartidos viven en src/styles/ y se compilan
+// globalmente desde src/styles.scss.
+// =============================================================
+@use '../styles/tokens' as t;
+
+:host {
+  display: block;
+
+  // Tokens expuestos como custom properties para permitir
+  // tematización en tiempo de ejecución (DevTools / temas).
+  --nav: #{t.$nav};
+  --primary: #{t.$primary};
+  --bg: #{t.$bg};
+  --line: #{t.$line};
+  --muted: #{t.$muted};
+  --low: #{t.$surface-alt};
+  --danger: #{t.$danger};
+  --success: #{t.$success};
+  --warning: #{t.$warning};
+}

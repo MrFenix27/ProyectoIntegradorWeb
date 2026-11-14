@@ -1,19 +1,16 @@
 spring:
   application:
     name: WebIntegrado
-  datasource:
-    url: jdbc:h2:mem:coldtrace
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
+
+  # Perfil activo por defecto: MySQL (requiere `docker compose up -d`).
+  # Para trabajar sin base de datos externa:
+  #   .\mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=h2
+  profiles:
+    default: mysql
+
   jpa:
-    hibernate:
-      ddl-auto: create-drop
     open-in-view: false
-    show-sql: true
-  h2:
-    console:
-      enabled: true
+    show-sql: false
 
 server:
   port: 8080

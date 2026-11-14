@@ -1,0 +1,13 @@
+{
+  "info": {
+    "name": "ColdTrace API - APF1",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [{"key": "baseUrl", "value": "http://localhost:8080"}],
+  "item": [
+    {"name": "Listar productos", "request": {"method": "GET", "url": "{{baseUrl}}/api/productos"}},
+    {"name": "Listar lotes", "request": {"method": "GET", "url": "{{baseUrl}}/api/lotes"}},
+    {"name": "Historial de temperaturas", "request": {"method": "GET", "url": "{{baseUrl}}/api/lotes/1/temperaturas"}},
+    {"name": "Registrar operación", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"manifiesto\": \"MF-2026-001\",\n  \"transportista\": \"TransCold SAC\",\n  \"tipoProducto\": \"Vacunas / Biológicos\",\n  \"controlesConfirmados\": [\"Integridad del Sello\", \"Datalogger Activo\"],\n  \"inspector\": \"Ana Torres\",\n  \"firma\": \"firma-demo\",\n  \"evidencia\": \"recepcion.jpg\"\n}"}, "url": "{{baseUrl}}/api/operaciones"}}
+  ]
+}

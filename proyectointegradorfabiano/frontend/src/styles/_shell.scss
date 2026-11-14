@@ -1,0 +1,213 @@
+// =============================================================
+// Estructura de la aplicación: barra lateral, topbar y shell.
+// =============================================================
+@use 'tokens' as t;
+
+.sidebar {
+  position: fixed;
+  z-index: 5;
+  inset: 0 auto 0 0;
+  width: t.$sidebar-width;
+  background: t.$nav;
+  color: #fff;
+  padding: 18px 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 8px 38px;
+
+  b {
+    font-size: 20px;
+  }
+
+  small {
+    display: block;
+    color: #c8d3e2;
+    font-size: 9px;
+    line-height: 11px;
+    letter-spacing: 0.08em;
+  }
+}
+
+.brand-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: t.$radius;
+  background: t.$primary;
+  display: grid;
+  place-items: center;
+}
+
+nav {
+  display: grid;
+  gap: 3px;
+}
+
+nav a,
+.settings {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: #e1e2e8;
+  text-decoration: none;
+  padding: 11px 14px;
+  border-radius: 5px;
+  font-size: t.$fs-md;
+  cursor: pointer;
+}
+
+nav a:hover,
+nav a.active {
+  background: t.$primary-hover;
+  color: #fff;
+  border-left: 4px solid t.$primary-soft;
+  padding-left: 10px;
+}
+
+.settings {
+  margin-top: auto;
+}
+
+.user {
+  border-top: 1px solid #ffffff25;
+  margin-top: t.$gap;
+  padding: 16px 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: t.$fs-base;
+
+  small {
+    display: block;
+    color: #9caabd;
+    margin-top: 3px;
+  }
+}
+
+.user-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #d6e3ff;
+  color: t.$primary;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.shell {
+  margin-left: t.$sidebar-width;
+  min-height: 100vh;
+}
+
+.topbar {
+  height: t.$topbar-height;
+  position: fixed;
+  left: t.$sidebar-width;
+  right: 0;
+  top: 0;
+  z-index: 4;
+  background: t.$surface;
+  border-bottom: 1px solid t.$line;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 32px;
+}
+
+.search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 340px;
+  background: t.$surface-alt;
+  padding: 7px 10px;
+  border-radius: t.$radius;
+  color: t.$muted;
+
+  input {
+    width: 100%;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    font-size: t.$fs-base;
+  }
+}
+
+.top-actions {
+  display: flex;
+  gap: 18px;
+  color: t.$muted;
+  align-items: center;
+}
+
+main {
+  padding: 96px 32px 36px;
+  max-width: 1500px;
+  margin: auto;
+}
+
+// El login se muestra a pantalla completa, sin barra lateral ni topbar
+.shell.sin-sesion {
+  margin-left: 0;
+}
+
+main.sin-sesion {
+  padding: 0;
+  max-width: none;
+}
+
+@include t.mobile {
+  .sidebar {
+    width: t.$sidebar-compact;
+    padding: 18px 8px;
+  }
+
+  .brand {
+    padding: 0 0 30px;
+    justify-content: center;
+  }
+
+  .brand > div:last-child,
+  nav a {
+    font-size: 0;
+  }
+
+  nav a {
+    justify-content: center;
+    padding: 12px 4px;
+  }
+
+  nav a span {
+    font-size: 21px;
+  }
+
+  .user span:last-child,
+  .settings {
+    font-size: 0;
+    justify-content: center;
+  }
+
+  .shell {
+    margin-left: t.$sidebar-compact;
+  }
+
+  .topbar {
+    left: t.$sidebar-compact;
+    padding: 0 14px;
+  }
+
+  .search {
+    width: 230px;
+  }
+
+  main {
+    padding: 84px 16px;
+  }
+}

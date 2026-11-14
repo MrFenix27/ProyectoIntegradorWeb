@@ -1,0 +1,35 @@
+// =============================================================
+// Punto de entrada de estilos globales (SASS).
+// Estructura:
+//   styles/_tokens.scss     → variables, mixins y breakpoints
+//   styles/_shell.scss      → sidebar, topbar y layout base
+//   styles/_components.scss → paneles, tablas, formularios, badges
+//   styles/_login.scss      → pantalla de login
+// =============================================================
+@use 'tokens' as t;
+@use 'shell';
+@use 'components';
+@use 'login';
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: t.$font-body;
+  background: t.$bg;
+  color: t.$text;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+:focus-visible {
+  outline: 2px solid t.$primary;
+  outline-offset: 2px;
+}

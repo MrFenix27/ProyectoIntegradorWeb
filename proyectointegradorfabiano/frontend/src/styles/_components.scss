@@ -1,0 +1,749 @@
+// =============================================================
+// Componentes visuales reutilizables por todas las vistas:
+// tarjetas KPI, paneles, tablas, formularios, badges y gráficos.
+// =============================================================
+@use 'tokens' as t;
+
+// ---------- Encabezados de vista ----------
+.title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 20px;
+  margin-bottom: 24px;
+
+  h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 6px 0 0;
+    color: t.$muted;
+    font-size: t.$fs-md;
+  }
+}
+
+// ---------- Botones ----------
+.primary,
+.button-row button {
+  border: 1px solid t.$primary;
+  background: t.$surface;
+  color: t.$primary;
+  padding: 9px 14px;
+  border-radius: t.$radius;
+  cursor: pointer;
+  font-size: t.$fs-base;
+}
+
+.primary {
+  background: t.$primary !important;
+  color: #fff !important;
+}
+
+button:disabled,
+.button-row button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.button-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+
+  select {
+    border: 1px solid t.$line;
+    background: t.$surface;
+    padding: 9px 12px;
+    border-radius: t.$radius;
+    font-size: t.$fs-base;
+  }
+
+  a {
+    border: 1px solid t.$line;
+    background: t.$surface;
+    color: t.$primary;
+    padding: 9px 12px;
+    border-radius: t.$radius;
+    font-size: t.$fs-base;
+    text-decoration: none;
+
+    &:hover {
+      border-color: t.$primary;
+    }
+  }
+}
+
+.table-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+
+  button {
+    border: 1px solid t.$line;
+    background: t.$surface;
+    color: t.$muted;
+    padding: 5px 9px;
+    border-radius: t.$radius;
+    cursor: pointer;
+    font-size: t.$fs-sm;
+
+    &:hover {
+      border-color: t.$primary;
+      color: t.$primary;
+    }
+
+    &.danger:hover {
+      border-color: t.$danger;
+      color: t.$danger;
+    }
+  }
+}
+
+// ---------- Tarjetas KPI ----------
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: t.$gap;
+  margin-bottom: 18px;
+
+  article {
+    min-height: 128px;
+    padding: 18px;
+    border: 1px solid t.$line;
+    border-radius: t.$radius-lg;
+    background: t.$surface;
+    position: relative;
+  }
+
+  label {
+    font-size: t.$fs-xs;
+    letter-spacing: 0.06em;
+    color: t.$muted;
+  }
+
+  strong {
+    display: block;
+    font-size: 36px;
+    margin-top: 24px;
+  }
+
+  small {
+    color: t.$success;
+    font-size: t.$fs-sm;
+  }
+
+  .danger {
+    background: #fff8f8;
+    border-color: #e5aaaa;
+  }
+}
+
+.kpis .danger strong,
+.danger small {
+  color: t.$danger;
+}
+
+// ---------- Paneles ----------
+.panel {
+  @include t.card;
+
+  header {
+    padding: 14px 16px;
+    border-bottom: 1px solid t.$line;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 16px;
+  }
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: t.$gap;
+  margin-bottom: 18px;
+}
+
+// ---------- Mapa decorativo ----------
+.map-area {
+  height: 340px;
+  background: #d9def8;
+  position: relative;
+  background-image:
+    linear-gradient(30deg, transparent 48%, #b2bee4 49%, transparent 50%),
+    linear-gradient(150deg, transparent 48%, #c2cbe9 49%, transparent 50%);
+}
+
+.map-pin {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid #fff;
+}
+
+.pin-one {
+  left: 28%;
+  top: 30%;
+  width: 14px;
+  height: 14px;
+  background: t.$danger;
+}
+
+.pin-two {
+  left: 58%;
+  top: 48%;
+  width: 10px;
+  height: 10px;
+  background: #00a9dc;
+}
+
+.pin-three {
+  right: 20%;
+  bottom: 28%;
+  width: 12px;
+  height: 12px;
+  background: t.$primary;
+}
+
+.map-legend {
+  position: absolute;
+  bottom: 15px;
+  left: 15px;
+  background: t.$surface;
+  padding: 9px;
+  display: flex;
+  gap: 15px;
+  font-size: t.$fs-xs;
+}
+
+.green-dot {
+  color: t.$success;
+}
+
+.amber-dot {
+  color: t.$warning;
+}
+
+.red-dot {
+  color: t.$danger;
+}
+
+// ---------- Alertas ----------
+.alerts > header b {
+  font-size: t.$fs-xs;
+  color: t.$danger;
+  background: t.$danger-bg;
+  padding: 4px;
+}
+
+.alert-item {
+  display: flex;
+  gap: 10px;
+  padding: 14px;
+  border-bottom: 1px solid t.$line;
+
+  > span {
+    color: t.$danger;
+  }
+
+  strong {
+    font-size: t.$fs-base;
+  }
+
+  p,
+  small {
+    display: block;
+    margin: 5px 0;
+    color: t.$muted;
+    font-size: t.$fs-sm;
+  }
+}
+
+.empty-alert {
+  padding: 28px 16px;
+  text-align: center;
+  color: t.$muted;
+  font-size: t.$fs-base;
+}
+
+.auto-refresh {
+  font-size: t.$fs-xs;
+  color: t.$muted;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+// ---------- Tablas ----------
+.recent header input {
+  border: 1px solid t.$line;
+  padding: 7px;
+}
+
+.recent table,
+.lot-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: t.$fs-base;
+}
+
+.recent th,
+.recent td,
+.lot-table th,
+.lot-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid t.$line;
+  text-align: left;
+}
+
+.recent th,
+.lot-table th {
+  background: t.$surface-alt;
+  font-size: t.$fs-xs;
+  color: t.$muted;
+}
+
+.right {
+  text-align: right !important;
+}
+
+.blue {
+  color: t.$primary;
+  font-weight: 600;
+}
+
+.status {
+  @include t.badge(t.$success, t.$success-bg);
+}
+
+.badge-danger {
+  background: t.$danger-bg;
+  color: t.$danger;
+}
+
+.badge-warning {
+  background: t.$warning-bg;
+  color: t.$warning;
+}
+
+.badge-success {
+  background: t.$success-bg;
+  color: t.$success;
+}
+
+.lot-table {
+  min-height: 500px;
+
+  footer {
+    padding: 14px;
+    text-align: right;
+    color: t.$muted;
+    font-size: t.$fs-sm;
+  }
+}
+
+.table-scroll {
+  overflow: auto;
+}
+
+.row-danger {
+  background: t.$surface-danger;
+}
+
+.empty {
+  text-align: center;
+  color: t.$muted;
+  padding: 22px 14px;
+}
+
+// ---------- Formularios ----------
+.product-form {
+  margin-bottom: 18px;
+
+  header span {
+    font: t.$fs-xs t.$font-mono;
+    color: t.$muted;
+  }
+}
+
+.product-fields {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1fr 1fr 1fr auto;
+  gap: 10px;
+  padding: 16px;
+  align-items: start;
+
+  label {
+    display: grid;
+    gap: 6px;
+    font-size: t.$fs-xs;
+    color: t.$muted;
+  }
+
+  input {
+    width: 100%;
+    border: 1px solid t.$line;
+    padding: 9px;
+    font-size: t.$fs-base;
+  }
+
+  button {
+    align-self: start;
+    margin-top: 18px;
+  }
+}
+
+.operation-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+}
+
+.operation-card {
+  min-height: 500px;
+
+  header h2 {
+    font-size: 20px;
+  }
+
+  header span {
+    background: t.$surface-muted;
+    padding: 6px;
+    font-size: t.$fs-sm;
+  }
+}
+
+.form-content {
+  padding: 22px;
+  display: grid;
+  gap: 18px;
+
+  label {
+    display: grid;
+    gap: 7px;
+    font-size: t.$fs-base;
+    color: t.$muted;
+  }
+
+  input,
+  select,
+  textarea {
+    border: 1px solid t.$line;
+    padding: 10px;
+    background: t.$surface;
+  }
+
+  textarea {
+    min-height: 85px;
+  }
+}
+
+.two-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.audit {
+  padding: 14px;
+  background: t.$surface-muted;
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+
+  b {
+    width: 100%;
+  }
+}
+
+.checks {
+  display: flex;
+  gap: 12px;
+}
+
+.success {
+  background: t.$success;
+  color: #fff;
+  border: 0;
+  padding: 11px;
+  cursor: pointer;
+}
+
+.quick-scan {
+  border: 1px solid t.$line;
+  padding: 12px;
+  display: grid;
+  grid-template-columns: 32px auto;
+  gap: 4px 10px;
+
+  span {
+    grid-row: span 2;
+    color: t.$primary;
+    font-size: 30px;
+  }
+
+  small {
+    color: t.$muted;
+  }
+}
+
+// Mensajes de validación por campo (formularios reactivos)
+.field-error {
+  color: t.$danger;
+  font-size: t.$fs-sm;
+  font-weight: 500;
+}
+
+.campo-invalido {
+  border-color: t.$danger !important;
+  background: #fff8f8 !important;
+}
+
+.form-message {
+  margin: 0;
+  padding: 0 16px 14px;
+  font-size: t.$fs-base;
+  color: t.$success;
+
+  &.error {
+    color: t.$danger;
+  }
+}
+
+// ---------- Trazabilidad ----------
+.journey {
+  margin-bottom: 18px;
+}
+
+.journey-line {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  padding: 30px 20px;
+  position: relative;
+
+  &:before {
+    content: '';
+    height: 2px;
+    background: t.$primary;
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    top: 55px;
+  }
+
+  article {
+    z-index: 1;
+    text-align: center;
+    background: t.$surface;
+    border: 1px solid t.$line;
+    padding: 15px;
+  }
+
+  b,
+  strong,
+  small {
+    display: block;
+  }
+
+  strong {
+    color: t.$primary;
+    margin: 10px;
+  }
+
+  small {
+    font-size: t.$fs-xs;
+    color: t.$muted;
+  }
+}
+
+.trace-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 18px;
+
+  aside {
+    display: grid;
+    gap: 18px;
+  }
+}
+
+.telemetry {
+  min-height: 430px;
+}
+
+.telemetry-chart {
+  height: 330px;
+  margin: 25px 35px;
+  position: relative;
+  border-left: 1px solid t.$line;
+  border-bottom: 1px solid t.$line;
+  background: repeating-linear-gradient(to bottom, transparent 0 32%, #e1e2e8 33%);
+
+  svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.safe-zone {
+  position: absolute;
+  top: 33%;
+  height: 34%;
+  width: 100%;
+  background: #006e2610;
+  border-block: 1px solid #006e2640;
+}
+
+.axis-label {
+  position: absolute;
+  left: -38px;
+  font: t.$fs-xs t.$font-mono;
+  color: t.$muted;
+
+  &.top {
+    top: 0;
+  }
+
+  &.bottom {
+    bottom: 0;
+  }
+}
+
+.current-status,
+.manifest {
+  padding: 20px;
+}
+
+.current-status {
+  label {
+    font-size: t.$fs-xs;
+    color: t.$primary;
+    letter-spacing: 0.08em;
+  }
+
+  strong {
+    font-size: 42px;
+    display: block;
+    margin: 20px 0;
+    color: t.$primary;
+  }
+}
+
+.current-status p,
+.manifest p {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid t.$line;
+  padding-top: 10px;
+  font-size: t.$fs-sm;
+  color: t.$muted;
+}
+
+.bar {
+  height: 6px;
+  background: #e1e2e8;
+  margin-top: 8px;
+
+  i {
+    display: block;
+    width: 82%;
+    height: 100%;
+    background: t.$primary;
+  }
+}
+
+// ---------- Resumen / detalle ----------
+.summary-content {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  padding: 20px;
+
+  > div {
+    padding: 12px;
+    background: t.$surface-alt;
+    border: 1px solid t.$line;
+  }
+
+  p {
+    margin: 8px 0;
+    color: t.$muted;
+    font-size: t.$fs-sm;
+  }
+
+  strong {
+    font-size: 28px;
+    color: t.$primary;
+  }
+
+  small {
+    grid-column: 1 / -1;
+    color: t.$muted;
+    font-size: t.$fs-sm;
+  }
+}
+
+.green-icon {
+  color: t.$success;
+}
+
+.danger-icon {
+  color: t.$danger;
+}
+
+// ---------- Aviso de permisos (rol GUEST) ----------
+.guest-note {
+  margin: 0 0 18px;
+  padding: 12px 16px;
+  border: 1px solid t.$warning-bg;
+  background: #fffaef;
+  color: t.$warning;
+  border-radius: t.$radius;
+  font-size: t.$fs-md;
+}
+
+// ---------- Responsivo ----------
+@include t.mobile {
+  .kpis,
+  .dashboard-grid,
+  .operation-columns,
+  .trace-grid,
+  .summary-content {
+    grid-template-columns: 1fr;
+  }
+
+  .title-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .button-row {
+    flex-wrap: wrap;
+  }
+
+  .journey-line {
+    grid-template-columns: 1fr;
+
+    &:before {
+      display: none;
+    }
+  }
+
+  .product-fields,
+  .two-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .product-fields button {
+    margin-top: 0;
+  }
+}

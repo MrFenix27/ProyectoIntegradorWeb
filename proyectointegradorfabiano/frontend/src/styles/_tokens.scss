@@ -1,0 +1,67 @@
+// =============================================================
+// Design tokens de ColdTrace
+// Se usan como variables SASS en tiempo de compilación y se
+// exponen como custom properties en tiempo de ejecución para
+// permitir tematización sin recompilar.
+// =============================================================
+
+// Paleta
+$nav: #0b1c30;
+$primary: #005ab3;
+$primary-hover: #0073e0;
+$primary-soft: #72b9ff;
+$bg: #f8f9ff;
+$line: #c0c6d6;
+$text: #191c20;
+$muted: #414754;
+$danger: #ba1a1a;
+$danger-bg: #ffdad6;
+$warning: #845000;
+$warning-bg: #ffedc9;
+$success: #006e26;
+$success-bg: #e0f2e5;
+$surface: #fff;
+$surface-alt: #f2f3f9;
+$surface-muted: #eceef3;
+$surface-danger: #fff6f6;
+
+// Tipografía
+$font-body: Inter, sans-serif;
+$font-mono: 'JetBrains Mono', monospace;
+$fs-xs: 10px;
+$fs-sm: 11px;
+$fs-base: 12px;
+$fs-md: 13px;
+
+// Layout
+$sidebar-width: 260px;
+$sidebar-compact: 70px;
+$topbar-height: 64px;
+$radius: 4px;
+$radius-lg: 6px;
+$gap: 16px;
+
+// Punto de quiebre para el diseño responsivo básico
+$breakpoint-mobile: 900px;
+
+@mixin mobile {
+  @media (max-width: $breakpoint-mobile) {
+    @content;
+  }
+}
+
+@mixin card {
+  background: $surface;
+  border: 1px solid $line;
+  border-radius: $radius-lg;
+  overflow: hidden;
+}
+
+@mixin badge($fg, $bg) {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: $radius;
+  background: $bg;
+  color: $fg;
+  font-size: $fs-xs;
+}
