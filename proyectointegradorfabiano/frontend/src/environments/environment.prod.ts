@@ -7,5 +7,5 @@
  */
 export const environment = {
   production: true,
-  apiUrl: 'https://coldtrace-api.onrender.com',
+  apiUrl: 'https://coldtrace-api-k6sn.onrender.com',
 };
