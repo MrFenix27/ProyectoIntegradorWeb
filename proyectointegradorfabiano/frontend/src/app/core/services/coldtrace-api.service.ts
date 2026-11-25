@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, forkJoin, map, of, switchMap } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import {
   Lote,
   NuevaTemperatura,
@@ -14,7 +15,7 @@ import {
 @Injectable({ providedIn: 'root' })
 export class ColdtraceApiService {
   private readonly http = inject(HttpClient);
-  private readonly base = '/api';
+  private readonly base = `${environment.apiUrl}/api`;
   productos(): Observable<Producto[]> { return this.http.get<Producto[]>(`${this.base}/productos`); }
   buscarProducto(id: number): Observable<Producto> { return this.http.get<Producto>(`${this.base}/productos/${id}`); }
   registrarProducto(data: Omit<Producto, 'id'>): Observable<Producto> { return this.http.post<Producto>(`${this.base}/productos`, data); }

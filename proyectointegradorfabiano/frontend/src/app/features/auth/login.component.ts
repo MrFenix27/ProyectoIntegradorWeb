@@ -97,7 +97,7 @@ export class LoginComponent {
         this.error.set(
           err?.status === 401 || err?.status === 403
             ? 'Credenciales inválidas.'
-            : err?.error?.message ?? 'No se pudo conectar con la API. Verifica que el backend esté en http://localhost:8080.'
+            : err?.error?.message ?? 'No se pudo conectar con la API. Inténtalo de nuevo en unos segundos.'
         );
       },
     });

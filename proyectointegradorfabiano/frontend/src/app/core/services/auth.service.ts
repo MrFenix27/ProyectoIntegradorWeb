@@ -2,13 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { AuthResponse, Rol } from '../../shared/models/auth.models';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
-  private readonly base = '/api/auth';
+  private readonly base = `${environment.apiUrl}/api/auth`;
 
   login(username: string, password: string) {
     return this.http.post<AuthResponse>(`${this.base}/login`, { username, password }).pipe(
