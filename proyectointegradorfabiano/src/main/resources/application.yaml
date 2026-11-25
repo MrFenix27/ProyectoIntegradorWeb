@@ -5,6 +5,7 @@ spring:
   # Perfil activo por defecto: MySQL (requiere `docker compose up -d`).
   # Para trabajar sin base de datos externa:
   #   .\mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=h2
+  # En la nube (Render + Supabase) se activa con SPRING_PROFILES_ACTIVE=prod
   profiles:
     default: mysql
 
@@ -13,9 +14,17 @@ spring:
     show-sql: false
 
 server:
-  port: 8080
+  # Render inyecta la variable PORT; en local cae a 8080.
+  port: ${PORT:8080}
 
 app:
   jwt:
-    secret: ColdTrace-Super-Secret-Key-32-Chars-Min!!
-    expiration-ms: 86400000
+    # En local usa un valor de desarrollo. En prod (application-prod.yaml) es
+    # obligatorio definir JWT_SECRET: si falta, la app falla al arrancar.
+    secret: ${JWT_SECRET:coldtrace-dev-only-secret-key-change-me-32ch}
+    expiration-ms: ${JWT_EXPIRATION_MS:86400000}
+  cors:
+    # Dominio del frontend desplegado (lista separada por comas permitida).
+    allowed-origins: ${FRONTEND_URL:http://localhost:4200}
+    # Habilita https://*.vercel.app (previews de Vercel).
+    allow-vercel-previews: ${ALLOW_VERCEL_PREVIEWS:false}

@@ -1,0 +1,59 @@
+# Perfil de produccion: Render + Supabase (PostgreSQL).
+# Todas las credenciales llegan por variables de entorno; nada hardcodeado.
+#   SPRING_PROFILES_ACTIVE=prod
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      pool-name: coldtrace-pool
+      # Supabase free (Session Pooler) permite ~15 conexiones: dejamos margen.
+      maximum-pool-size: ${DB_POOL_MAX:5}
+      minimum-idle: 1
+      connection-timeout: 10000
+      idle-timeout: 300000
+      max-lifetime: 600000
+      keepalive-time: 120000
+
+  jpa:
+    open-in-view: false
+    show-sql: false
+    hibernate:
+      # El esquema lo crea/ajusta Hibernate en el primer arranque.
+      ddl-auto: update
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+
+  h2:
+    console:
+      enabled: false
+
+server:
+  port: ${PORT:8080}
+  # Render termina TLS en su proxy: respeta X-Forwarded-* para las URLs absolutas.
+  forward-headers-strategy: framework
+
+app:
+  jwt:
+    # Sin valor por defecto: si JWT_SECRET no esta definido, la app falla al arrancar.
+    secret: ${JWT_SECRET}
+  cors:
+    # Dominio del frontend en Vercel (puede ser una lista separada por comas).
+    allowed-origins: ${FRONTEND_URL:http://localhost:4200}
+    # Permite los dominios de preview de Vercel (https://*.vercel.app).
+    allow-vercel-previews: ${ALLOW_VERCEL_PREVIEWS:false}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never
+      probes:
+        enabled: true
