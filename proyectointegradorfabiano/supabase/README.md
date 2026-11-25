@@ -23,7 +23,7 @@ no volverá a insertar nada porque detecta que ya hay datos.
 Supabase Dashboard → **Connect** → **Session pooler**:
 
 ```
-jdbc:postgresql://aws-0-<REGION>.pooler.supabase.com:5432/postgres?sslmode=require
+jdbc:postgresql://aws-<0|1>-<REGION>.pooler.supabase.com:5432/postgres?sslmode=require
 ```
 
 - **Usuario:** `postgres.<PROJECT_REF>` (el pooler lo exige así).

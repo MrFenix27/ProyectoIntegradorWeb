@@ -26,7 +26,7 @@ Orden obligatorio: **Supabase → Render → Vercel → (ajustar FRONTEND_URL en
 3. **Connect → Session pooler** y copia el host. La cadena JDBC es:
 
 ```
-jdbc:postgresql://aws-0-<REGION>.pooler.supabase.com:5432/postgres?sslmode=require
+jdbc:postgresql://aws-<0|1>-<REGION>.pooler.supabase.com:5432/postgres?sslmode=require
 ```
 
 - Usuario: `postgres.<PROJECT_REF>`
@@ -58,7 +58,7 @@ jdbc:postgresql://aws-0-<REGION>.pooler.supabase.com:5432/postgres?sslmode=requi
 | Variable | Valor |
 |---|---|
 | `SPRING_PROFILES_ACTIVE` | `prod` |
-| `SPRING_DATASOURCE_URL` | `jdbc:postgresql://aws-0-<REGION>.pooler.supabase.com:5432/postgres?sslmode=require` |
+| `SPRING_DATASOURCE_URL` | `jdbc:postgresql://aws-<0|1>-<REGION>.pooler.supabase.com:5432/postgres?sslmode=require` |
 | `SPRING_DATASOURCE_USERNAME` | `postgres.<PROJECT_REF>` |
 | `SPRING_DATASOURCE_PASSWORD` | *(password de Supabase)* |
 | `JWT_SECRET` | cadena aleatoria ≥ 32 caracteres (`openssl rand -base64 48`) |
@@ -149,6 +149,7 @@ curl http://localhost:8081/actuator/health
 | Síntoma | Causa | Solución |
 |---|---|---|
 | `UnknownHostException: db.<ref>.supabase.co` | conexión directa IPv6 | usar Session pooler |
+| `FATAL: (ENOTFOUND) tenant/user postgres.<ref> not found` | shard del pooler equivocado (`aws-0` vs `aws-1`) | copiar el host exacto de Connect → Session pooler y probar el otro shard |
 | `FATAL: password authentication failed` | usuario sin `.<PROJECT_REF>` | usuario `postgres.<ref>` |
 | `too many connections` | pool grande en free tier | `DB_POOL_MAX=5` |
 | CORS bloqueado en el navegador | `FRONTEND_URL` desactualizado | actualizar y redeploy |
