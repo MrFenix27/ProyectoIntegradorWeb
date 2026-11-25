@@ -27,6 +27,26 @@ El detalle de la organización del frontend (módulos, rutas, servicios y estilo
 
 ## Arranque rápido
 
+### Opción 1: un solo comando (recomendado)
+
+```powershell
+# Todo en uno: base de datos + backend + frontend
+.\start.cmd
+
+# Con MySQL persistente (levanta docker compose)
+.\start.cmd -Db mysql
+
+# Detener todo
+.\stop.ps1
+```
+
+`start.ps1` (o `start.cmd` para doble clic) abre una ventana por servicio, espera a que el
+backend y el frontend respondan y abre el navegador. Sin argumentos usa H2 en memoria
+(no requiere Docker); con `-Db mysql` levanta MySQL y usa el perfil persistente.
+Otros parámetros: `-NoBackend`, `-NoFrontend`, `-NoBrowser`.
+
+### Opción 2: manual
+
 ```powershell
 # 1) Base de datos MySQL + phpMyAdmin
 docker compose up -d

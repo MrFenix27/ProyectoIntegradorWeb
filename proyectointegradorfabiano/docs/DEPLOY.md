@@ -123,6 +123,17 @@ curl https://<servicio>.onrender.com/actuator/health
 
 ## 5. Checklist post-despliegue
 
+Antes de una demo, ejecuta la verificación automática (despierta Render y valida
+health, login, datos, SPA y CORS):
+
+```powershell
+.\scripts\verificar-produccion.ps1
+```
+
+Salida esperada: seis líneas `[ OK ]` y `Todo listo para la demo.`
+
+Verificación manual:
+
 - [ ] `GET https://<render>/actuator/health` → `200` y `"status":"UP"`.
 - [ ] `GET https://<render>/` → JSON de bienvenida.
 - [ ] `POST https://<render>/api/auth/login` con `admin/admin123` → `200` + `token`.
