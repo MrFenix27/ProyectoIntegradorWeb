@@ -127,10 +127,11 @@ Antes de una demo, ejecuta la verificación automática (despierta Render y vali
 health, login, datos, SPA y CORS):
 
 ```powershell
-.\scripts\verificar-produccion.ps1
+.\produccion.cmd
 ```
 
-Salida esperada: seis líneas `[ OK ]` y `Todo listo para la demo.`
+Salida esperada: seis líneas `[ OK ]` y `Todo listo: Render + Supabase + Vercel responden.`
+El script abre el frontend al terminar; usa `-NoBrowser` para no abrirlo.
 
 Verificación manual:
 

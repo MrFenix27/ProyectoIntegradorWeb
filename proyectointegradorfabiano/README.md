@@ -45,6 +45,20 @@ backend y el frontend respondan y abre el navegador. Sin argumentos usa H2 en me
 (no requiere Docker); con `-Db mysql` levanta MySQL y usa el perfil persistente.
 Otros parámetros: `-NoBackend`, `-NoFrontend`, `-NoBrowser`.
 
+### Producción (Render + Supabase + Vercel)
+
+En la nube no hay nada que arrancar: los servicios ya están desplegados. Lo que hace
+falta antes de una demo es despertar Render (plan Free duerme a los 15 min) y confirmar
+que Supabase y Vercel responden:
+
+```powershell
+.\produccion.cmd            # despierta, verifica y abre el frontend
+.\produccion.cmd -NoBrowser # solo verificar (útil en CI o terminal)
+```
+
+Equivale a `.\scripts\verificar-produccion.ps1`. Si algo falla, el script imprime pistas
+(Supabase pausado, Render dormido, build viejo).
+
 ### Opción 2: manual
 
 ```powershell

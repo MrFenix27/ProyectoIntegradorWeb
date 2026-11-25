@@ -16,7 +16,8 @@ param(
     [string]$Api = 'https://coldtrace-api-k6sn.onrender.com',
     [string]$Web = 'https://coldtrace-one.vercel.app',
     [string]$Usuario = 'admin',
-    [string]$Password = 'admin123'
+    [string]$Password = 'admin123',
+    [switch]$NoBrowser
 )
 
 $ErrorActionPreference = 'Continue'
@@ -112,9 +113,18 @@ try {
 
 Write-Host ''
 if ($fallos -eq 0) {
-    Write-Host '  Todo listo para la demo.' -ForegroundColor Green
+    Write-Host '  Todo listo: Render + Supabase + Vercel responden.' -ForegroundColor Green
+    if (-not $NoBrowser) {
+        Write-Host ("  Abriendo {0}" -f $Web) -ForegroundColor DarkGray
+        try { Start-Process $Web | Out-Null } catch { }
+    }
     exit 0
 } else {
     Write-Host ("  {0} comprobacion(es) fallaron." -f $fallos) -ForegroundColor Red
+    Write-Host '' 
+    Write-Host '  Pistas:' -ForegroundColor Yellow
+    Write-Host '   - Render plan Free duerme a los 15 min: si el health fallo, espera 60 s y reintenta.'
+    Write-Host '   - Supabase plan Free pausa el proyecto a los 7 dias: Dashboard -> proyecto -> Restore.'
+    Write-Host '   - Si el build es viejo: git push a main y espera el auto-deploy.'
     exit 1
 }
