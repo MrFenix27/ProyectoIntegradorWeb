@@ -1,5 +1,18 @@
 # Despliegue en la nube — ColdTrace
 
+## Estado actual del despliegue
+
+| Componente | URL / dato |
+|---|---|
+| Backend (Render) | `https://coldtrace-api-k6sn.onrender.com` |
+| Frontend (Vercel) | `https://coldtrace-one.vercel.app` |
+| Base de datos (Supabase) | `us-east-1` · project ref `unbovhkzidhzcurjshxe` · **Session Pooler `aws-1-us-east-1`** |
+| Health check | `https://coldtrace-api-k6sn.onrender.com/actuator/health` |
+
+> El shard del pooler de Supabase puede ser `aws-0` o `aws-1` según el proyecto.
+> Este proyecto usa `aws-1-us-east-1.pooler.supabase.com`; con `aws-0` el pooler
+> responde `FATAL: (ENOTFOUND) tenant/user ... not found`.
+
 Arquitectura final:
 
 ```
