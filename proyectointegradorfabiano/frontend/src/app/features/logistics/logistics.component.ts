@@ -17,11 +17,6 @@ import { Operacion } from '../../shared/models/domain.models';
         <p>Gestiona despachos y recepción de activos de cadena de frío.</p>
       </div>
       <div class="button-row">
-        <div class="quick-scan">
-          <span class="material-symbols-outlined">qr_code_scanner</span>
-          <b>Escaneo rápido</b>
-          <small>Listo para ingresar</small>
-        </div>
         <small class="auto-refresh"><span class="material-symbols-outlined">sync</span>Actualización instantánea</small>
       </div>
     </div>

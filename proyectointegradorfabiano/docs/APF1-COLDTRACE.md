@@ -49,6 +49,7 @@ Paquetes backend: `model`, `repository`, `service`, `controller`, `exception` y 
 | GET | `/api/lotes` | Lista lotes con su producto. |
 | POST | `/api/lotes` | Registra lote asociado a un producto existente. |
 | GET | `/api/lotes/{id}` | Consulta un lote. |
+| PUT | `/api/lotes/{id}` | Actualiza un lote existente. |
 | DELETE | `/api/lotes/{id}` | Elimina lote. |
 | GET | `/api/lotes/{loteId}/temperaturas` | Consulta historial térmico ordenado. |
 | POST | `/api/lotes/{loteId}/temperaturas` | Registra lectura para un lote. |

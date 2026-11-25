@@ -93,6 +93,7 @@ Las pruebas E2E requieren el backend corriendo (`http://localhost:8080`).
 
 - [`docs/INFORME-AVANCE.md`](docs/INFORME-AVANCE.md) — cumplimiento de requerimientos
 - [`docs/INFORME-EXPOSICION.md`](docs/INFORME-EXPOSICION.md) — guion de exposición por requerimiento
+- [`docs/reporte/Guion-Exposicion-ColdTrace.pdf`](docs/reporte/Guion-Exposicion-ColdTrace.pdf) — guion visual con rutas, líneas y capturas por sección
 - [`docs/evidencias/README.md`](docs/evidencias/README.md) — capturas y cómo reproducirlas
 - [`frontend/README.md`](frontend/README.md) — arquitectura del frontend, SASS y formularios
 

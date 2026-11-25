@@ -7,14 +7,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.WebIntegrado.exception.RecursoNoEncontradoException;
 import com.example.WebIntegrado.model.Producto;
+import com.example.WebIntegrado.repository.LoteRepository;
 import com.example.WebIntegrado.repository.ProductoRepository;
 
 @Service
 public class ProductoService {
     private final ProductoRepository repository;
+    private final LoteRepository loteRepository;
 
-    public ProductoService(ProductoRepository repository) {
+    public ProductoService(ProductoRepository repository, LoteRepository loteRepository) {
         this.repository = repository;
+        this.loteRepository = loteRepository;
     }
 
     @Transactional(readOnly = true)
@@ -53,7 +56,12 @@ public class ProductoService {
 
     @Transactional
     public void eliminar(Long id) {
-        repository.delete(buscarPorId(id));
+        Producto producto = buscarPorId(id);
+        if (loteRepository.existsByProductoId(id)) {
+            throw new IllegalStateException(
+                    "No se puede eliminar el producto " + id + " porque tiene lotes asociados");
+        }
+        repository.delete(producto);
     }
 
     private void validarRango(Producto producto) {

@@ -1,0 +1,1519 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ColdTrace — Guion de exposición con evidencia visual</title>
+<style>
+  :root {
+    --navy: #0b1c30;
+    --navy-2: #123a63;
+    --blue: #005ab3;
+    --blue-soft: #e8f1fb;
+    --bg: #f8f9ff;
+    --line: #d8dee9;
+    --text: #191c20;
+    --muted: #5b6472;
+    --green: #006e26;
+    --green-bg: #e0f2e5;
+    --amber: #845000;
+    --amber-bg: #ffedc9;
+    --red: #ba1a1a;
+    --red-bg: #ffdad6;
+    --mono: 'Cascadia Code', Consolas, 'Courier New', monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: #fff;
+    color: var(--text);
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 10.4pt;
+    line-height: 1.48;
+  }
+
+  a { color: var(--blue); text-decoration: none; }
+
+  .cover {
+    background: linear-gradient(135deg, var(--navy) 0%, #0e2a4a 55%, var(--navy-2) 100%);
+    color: #fff;
+    padding: 24mm 18mm 18mm;
+    border-radius: 7px;
+    margin: 0 0 8mm;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cover::after {
+    content: '';
+    position: absolute;
+    width: 110mm;
+    height: 110mm;
+    border-radius: 50%;
+    right: -35mm;
+    top: -35mm;
+    background: rgba(114, 185, 255, .12);
+  }
+
+  .cover .eyebrow {
+    font-size: 8pt;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: #9fc7f5;
+    font-weight: 700;
+    margin-bottom: 12mm;
+  }
+
+  .cover h1 {
+    font-size: 33pt;
+    line-height: 1.06;
+    margin: 0 0 4mm;
+    letter-spacing: -.02em;
+  }
+
+  .cover .subtitle {
+    font-size: 16pt;
+    font-weight: 600;
+    color: #d8e8fb;
+    margin: 0 0 5mm;
+  }
+
+  .cover .description {
+    font-size: 10.5pt;
+    color: #c8d8ec;
+    max-width: 125mm;
+    margin: 0 0 14mm;
+  }
+
+  .cover-meta {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4mm;
+    margin-top: 10mm;
+    position: relative;
+    z-index: 1;
+  }
+
+  .cover-meta div {
+    border-top: 1px solid rgba(255,255,255,.25);
+    padding-top: 3mm;
+  }
+
+  .cover-meta span {
+    display: block;
+    font-size: 7.4pt;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #9fc7f5;
+    margin-bottom: 1mm;
+  }
+
+  .cover-meta b {
+    font-size: 10.5pt;
+    color: #fff;
+  }
+
+  .cover-credentials {
+    margin-top: 14mm;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3mm;
+    position: relative;
+    z-index: 1;
+  }
+
+  .cover-credentials div {
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.16);
+    border-radius: 5px;
+    padding: 3mm 4mm;
+    font-size: 8.5pt;
+    color: #d8e8fb;
+  }
+
+  .cover-credentials b {
+    display: block;
+    color: #fff;
+    font-size: 10pt;
+    margin-bottom: .5mm;
+  }
+
+  .page-break { break-before: page; }
+  .section { break-before: page; }
+
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 2px solid var(--navy);
+    padding-bottom: 4mm;
+    margin-bottom: 6mm;
+  }
+
+  .section-head .number {
+    font-size: 26pt;
+    line-height: 1;
+    color: var(--blue);
+    font-weight: 800;
+    margin-right: 5mm;
+  }
+
+  .section-head h2 {
+    font-size: 20pt;
+    line-height: 1.1;
+    margin: 0;
+    color: var(--navy);
+  }
+
+  .section-head .time {
+    background: var(--blue-soft);
+    color: var(--blue);
+    border: 1px solid #c7dcf5;
+    border-radius: 999px;
+    padding: 1.2mm 3.5mm;
+    font-size: 8pt;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  h3 {
+    font-size: 12.5pt;
+    color: var(--navy);
+    margin: 7mm 0 2.5mm;
+    padding-left: 3mm;
+    border-left: 3px solid var(--blue);
+  }
+
+  h4 {
+    font-size: 10.5pt;
+    color: var(--navy);
+    margin: 5mm 0 2mm;
+  }
+
+  p { margin: 0 0 2.5mm; }
+
+  ul, ol { margin: 0 0 3mm 5mm; padding: 0; }
+  li { margin-bottom: 1.2mm; }
+
+  .lead {
+    font-size: 11pt;
+    color: #2d3440;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--blue);
+    border-radius: 4px;
+    padding: 3.5mm 4mm;
+    margin-bottom: 5mm;
+  }
+
+  .ref {
+    font-family: var(--mono);
+    font-size: 7.8pt;
+    color: #164a7d;
+    background: #eef4fb;
+    border: 1px solid #d3e2f4;
+    border-radius: 3px;
+    padding: .3mm 1.6mm;
+    white-space: nowrap;
+  }
+
+  code {
+    font-family: var(--mono);
+    font-size: 8.4pt;
+    background: #f1f3f7;
+    border: 1px solid #e0e4ea;
+    border-radius: 3px;
+    padding: .2mm 1.2mm;
+  }
+
+  pre {
+    font-family: var(--mono);
+    font-size: 8.2pt;
+    line-height: 1.45;
+    background: #f6f8fb;
+    border: 1px solid #dbe2ec;
+    border-left: 4px solid var(--blue);
+    border-radius: 4px;
+    padding: 3.5mm 4mm;
+    margin: 2mm 0 4mm;
+    white-space: pre-wrap;
+    word-break: break-word;
+    color: #17212e;
+  }
+
+  pre code {
+    background: none;
+    border: 0;
+    padding: 0;
+    font-size: inherit;
+  }
+
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2mm 0 4mm;
+    font-size: 8.5pt;
+  }
+
+  .table th {
+    background: #eef3fa;
+    color: var(--navy);
+    text-align: left;
+    font-weight: 700;
+    border: 1px solid var(--line);
+    padding: 2mm 2.5mm;
+    vertical-align: top;
+  }
+
+  .table td {
+    border: 1px solid var(--line);
+    padding: 2mm 2.5mm;
+    vertical-align: top;
+  }
+
+  .table tr:nth-child(even) td { background: #fbfcfe; }
+
+  .callout {
+    border-radius: 4px;
+    padding: 3.5mm 4mm;
+    margin: 3mm 0 4mm;
+    border: 1px solid var(--line);
+    background: #fbfcfe;
+  }
+
+  .callout b { color: var(--navy); }
+
+  .callout.tip {
+    background: var(--green-bg);
+    border-color: #b9dfc4;
+  }
+
+  .callout.tip b { color: var(--green); }
+
+  .callout.warn {
+    background: var(--amber-bg);
+    border-color: #efd39b;
+  }
+
+  .callout.warn b { color: var(--amber); }
+
+  .callout.danger {
+    background: var(--red-bg);
+    border-color: #f0b8b3;
+  }
+
+  .callout.danger b { color: var(--red); }
+
+  .qa {
+    border: 1px solid #c7dcf5;
+    border-radius: 5px;
+    overflow: hidden;
+    margin: 3mm 0 4mm;
+  }
+
+  .qa .q {
+    background: var(--navy);
+    color: #fff;
+    padding: 2.8mm 4mm;
+    font-weight: 700;
+    font-size: 9.6pt;
+  }
+
+  .qa .a {
+    padding: 3.5mm 4mm;
+    background: #fff;
+  }
+
+  .qa .a p:last-child { margin-bottom: 0; }
+
+  figure.shot {
+    margin: 4mm 0 5mm;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  figure.shot img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid #c9d1dd;
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(11, 28, 48, .10);
+    background: #fff;
+  }
+
+  figure.shot figcaption {
+    font-size: 8.2pt;
+    color: var(--muted);
+    padding: 2mm 1mm 0;
+    line-height: 1.4;
+  }
+
+  figure.shot figcaption b { color: var(--navy); }
+
+  .figure-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4mm;
+    margin: 4mm 0 5mm;
+  }
+
+  .figure-grid figure.shot { margin: 0; }
+
+  .figure-grid figure.shot img { max-height: 70mm; object-fit: cover; object-position: top; }
+
+  .steps {
+    counter-reset: step;
+    list-style: none;
+    margin-left: 0;
+  }
+
+  .steps li {
+    counter-increment: step;
+    position: relative;
+    padding-left: 10mm;
+    margin-bottom: 2mm;
+  }
+
+  .steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 6.5mm;
+    height: 6.5mm;
+    border-radius: 50%;
+    background: var(--blue);
+    color: #fff;
+    font-size: 8pt;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .tag {
+    display: inline-block;
+    font-size: 7.5pt;
+    font-weight: 700;
+    letter-spacing: .04em;
+    border-radius: 999px;
+    padding: .8mm 2.5mm;
+    margin-right: 1.5mm;
+    vertical-align: 1px;
+  }
+
+  .tag.get { background: #e0f2e5; color: var(--green); }
+  .tag.post { background: #e8f1fb; color: var(--blue); }
+  .tag.put { background: var(--amber-bg); color: var(--amber); }
+  .tag.delete { background: var(--red-bg); color: var(--red); }
+  .tag.guard { background: #ede7f6; color: #4b2c7a; }
+
+  .toc {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3mm 8mm;
+    margin: 4mm 0 6mm;
+  }
+
+  .toc a {
+    display: flex;
+    justify-content: space-between;
+    gap: 4mm;
+    border-bottom: 1px dotted #c9d1dd;
+    padding: 2mm 0;
+    color: var(--text);
+    font-size: 9.5pt;
+  }
+
+  .toc a b { color: var(--blue); }
+
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3mm;
+    margin: 3mm 0 5mm;
+  }
+
+  .kpi-row div {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 3mm 3.5mm;
+  }
+
+  .kpi-row span {
+    display: block;
+    font-size: 7.5pt;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--muted);
+    margin-bottom: 1mm;
+  }
+
+  .kpi-row b { font-size: 11pt; color: var(--navy); }
+
+  .footer-note {
+    margin-top: 8mm;
+    padding-top: 3mm;
+    border-top: 1px solid var(--line);
+    font-size: 8pt;
+    color: var(--muted);
+  }
+
+  .nowrap { white-space: nowrap; }
+
+  .small { font-size: 8.5pt; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<!-- ===================== PORTADA ===================== -->
+<div class="cover">
+  <div class="eyebrow">Proyecto Integrador · Desarrollo Web · 2026</div>
+  <h1>Guion de exposición</h1>
+  <div class="subtitle">ColdTrace · Monitoreo de cadena de frío</div>
+  <p class="description">
+    Rutas de código, líneas exactas y evidencia visual para cada bloque de la presentación.
+    Documento construido a partir del repositorio y de las capturas reales del sistema.
+  </p>
+
+  <div class="cover-meta">
+    <div><span>Frontend</span><b>Angular 22</b></div>
+    <div><span>Backend</span><b>Spring Boot</b></div>
+    <div><span>Base de datos</span><b>MySQL 8.4</b></div>
+    <div><span>Seguridad</span><b>JWT + roles</b></div>
+  </div>
+
+  <div class="cover-credentials">
+    <div><b>admin / admin123</b>ADMIN · CRUD completo</div>
+    <div><b>user / user123</b>USER · alta y edición</div>
+    <div><b>guest / guest123</b>GUEST · solo lectura</div>
+  </div>
+</div>
+
+<!-- ===================== ÍNDICE ===================== -->
+<div class="section">
+  <div class="section-head">
+    <div style="display:flex;align-items:flex-end;">
+      <div class="number">00</div>
+      <h2>Cómo usar este documento</h2>
+    </div>
+    <div class="time">Guía rápida</div>
+  </div>
+
+  <p class="lead">
+    Cada sección conserva la estructura de la exposición: <b>qué decir</b>, <b>dónde está en el código</b>,
+    <b>qué mostrar en pantalla</b> y <b>qué responder</b> a la pregunta probable. Las rutas de archivo son
+    relativas a <code>proyectointegradorfabiano/</code> y las líneas corresponden al código actual del repositorio.
+  </p>
+
+  <div class="toc">
+    <a href="#s1"><span><b>01</b> · Interfaz Angular</span><span>1,5 min</span></a>
+    <a href="#s2"><span><b>02</b> · Formularios</span><span>2 min</span></a>
+    <a href="#s3"><span><b>03</b> · Consumo de servicios REST</span><span>2 min</span></a>
+    <a href="#s4"><span><b>04</b> · Autenticación y autorización</span><span>2 min</span></a>
+    <a href="#s5"><span><b>05</b> · Integración técnica</span><span>1 min</span></a>
+    <a href="#s6"><span><b>06</b> · Pruebas y documentación</span><span>1 min</span></a>
+    <a href="#anexo"><span><b>07</b> · Precisiones y comandos</span><span>Anexo</span></a>
+    <a href="#mapa"><span><b>08</b> · Mapa de rutas</span><span>Anexo</span></a>
+  </div>
+
+  <h3 id="mapa">Mapa rápido de rutas de la aplicación</h3>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>URL</th>
+        <th>Componente</th>
+        <th>Archivo del componente</th>
+        <th>Archivo de ruta</th>
+        <th>Guarda</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>/login</code></td>
+        <td>LoginComponent</td>
+        <td><span class="ref">frontend/src/app/features/auth/login.component.ts:7-105</span></td>
+        <td><span class="ref">frontend/src/app/features/auth/auth.routes.ts:5</span></td>
+        <td>Pública</td>
+      </tr>
+      <tr>
+        <td><code>/dashboard</code></td>
+        <td>DashboardComponent</td>
+        <td><span class="ref">frontend/src/app/features/dashboard/dashboard.component.ts:8-163</span></td>
+        <td><span class="ref">frontend/src/app/features/dashboard/dashboard.routes.ts:6-8</span></td>
+        <td><span class="tag guard">authGuard</span></td>
+      </tr>
+      <tr>
+        <td><code>/lotes</code></td>
+        <td>LotsComponent</td>
+        <td><span class="ref">frontend/src/app/features/lots/lots.component.ts:29-626</span></td>
+        <td><span class="ref">frontend/src/app/features/lots/lots.routes.ts:8</span></td>
+        <td><span class="tag guard">authGuard</span></td>
+      </tr>
+      <tr>
+        <td><code>/productos/:id</code></td>
+        <td>ProductoDetalleComponent</td>
+        <td><span class="ref">frontend/src/app/features/lots/producto-detalle.component.ts:13-200</span></td>
+        <td><span class="ref">frontend/src/app/features/lots/lots.routes.ts:9</span></td>
+        <td><span class="tag guard">authGuard</span></td>
+      </tr>
+      <tr>
+        <td><code>/logistica</code></td>
+        <td>LogisticsComponent</td>
+        <td><span class="ref">frontend/src/app/features/logistics/logistics.component.ts:9-440</span></td>
+        <td><span class="ref">frontend/src/app/features/logistics/logistics.routes.ts:6-13</span></td>
+        <td><span class="tag guard">authGuard + roleGuard</span></td>
+      </tr>
+      <tr>
+        <td><code>/trazabilidad</code></td>
+        <td>TraceReportComponent</td>
+        <td><span class="ref">frontend/src/app/features/traceability/trace-report.component.ts:7-353</span></td>
+        <td><span class="ref">frontend/src/app/features/traceability/traceability.routes.ts:6-8</span></td>
+        <td><span class="tag guard">authGuard</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Composición de rutas</h4>
+  <pre><code>// frontend/src/app/app.routes.ts:13-21
+export const routes: Routes = [
+  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+  ...AUTH_ROUTES,
+  ...DASHBOARD_ROUTES,
+  ...LOTS_ROUTES,
+  ...LOGISTICS_ROUTES,
+  ...TRACEABILITY_ROUTES,
+  { path: '**', redirectTo: 'dashboard' },
+];</code></pre>
+
+  <div class="callout warn">
+    <b>Precisión inmediata:</b> son <b>6 rutas de componente</b> y <b>5 están protegidas</b> con guardas.
+    La única pública es <code>/login</code>. Decir “6 rutas con guardas” es técnicamente inexacto.
+  </div>
+
+  <div class="footer-note">
+    <b>URLs de la demo:</b> front <code>http://localhost:4200/login</code> ·
+    API <code>http://localhost:8080/api</code> · phpMyAdmin <code>http://localhost:8081</code>.
+  </div>
+</div>
+
+<!-- ===================== 1. INTERFAZ ANGULAR ===================== -->
+<div class="section" id="s1">
+  <div class="section-head">
+    <div style="display:flex;align-items:flex-end;">
+      <div class="number">01</div>
+      <h2>Interfaz Angular</h2>
+    </div>
+    <div class="time">1,5 min</div>
+  </div>
+
+  <p class="lead">
+    Hay componentes para <b>lista</b>, <b>formulario</b> y <b>detalle</b>. El enrutamiento tiene 6 rutas
+    (5 protegidas con guardas). Los estilos están en SASS, con tokens, mixins y parciales; el diseño es responsivo.
+  </p>
+
+  <h3>Qué decir y dónde está en el código</h3>
+
+  <h4>Lista de productos y lotes</h4>
+  <ul>
+    <li>Tabla de productos: <span class="ref">frontend/src/app/features/lots/lots.component.ts:258-305</span></li>
+    <li>Tabla de lotes: <span class="ref">frontend/src/app/features/lots/lots.component.ts:307-355</span></li>
+    <li>Tabla de últimos lotes del panel: <span class="ref">frontend/src/app/features/dashboard/dashboard.component.ts:83-115</span></li>
+  </ul>
+
+  <h4>Formularios</h4>
+  <ul>
+    <li>Producto: <span class="ref">frontend/src/app/features/lots/lots.component.ts:51-141</span></li>
+    <li>Lote y lectura de temperatura: <span class="ref">frontend/src/app/features/lots/lots.component.ts:143-255</span></li>
+    <li>Despacho y recepción: <span class="ref">frontend/src/app/features/logistics/logistics.component.ts:33-205</span></li>
+    <li>Login: <span class="ref">frontend/src/app/features/auth/login.component.ts:13-57</span></li>
+  </ul>
+
+  <h4>Detalle</h4>
+  <ul>
+    <li>Plantilla de la ficha, lotes asociados y cumplimiento térmico: <span class="ref">frontend/src/app/features/lots/producto-detalle.component.ts:32-90</span></li>
+    <li>Lógica del componente: <span class="ref">frontend/src/app/features/lots/producto-detalle.component.ts:93-200</span></li>
+  </ul>
+
+  <h4>Enrutamiento y guardas</h4>
+  <ul>
+    <li>Composición: <span class="ref">frontend/src/app/app.routes.ts:13-21</span></li>
+    <li><code>authGuard</code> exige sesión: <span class="ref">frontend/src/app/core/guards/auth.guard.ts:7-11</span></li>
+    <li><code>roleGuard</code> exige rol: <span class="ref">frontend/src/app/core/guards/auth.guard.ts:18-32</span></li>
+    <li>Logística protegida por ambos y limitada a ADMIN/USER: <span class="ref">frontend/src/app/features/logistics/logistics.routes.ts:6-13</span></li>
+  </ul>
+
+  <pre><code>// frontend/src/app/core/guards/auth.guard.ts:7-11
+export const authGuard: CanActivateFn = () =&gt; {
+  const auth = inject(AuthService);
+  const router = inject(Router);
+  return auth.logueado ? true : router.parseUrl('/login');
+};</code></pre>
+
+  <h4>Estilos SASS: tokens, mixins y parciales</h4>
+  <ul>
+    <li>Punto de entrada: <span class="ref">frontend/src/styles.scss:9-12</span></li>
+    <li>Tokens, mixins y breakpoint: <span class="ref">frontend/src/styles/_tokens.scss:8-67</span></li>
+    <li>Sidebar, topbar, layout y bloque responsivo: <span class="ref">frontend/src/styles/_shell.scss:1-213</span></li>
+    <li>Paneles, tablas, formularios, badges y bloque responsivo: <span class="ref">frontend/src/styles/_components.scss:1-749</span></li>
+    <li>Pantalla de login: <span class="ref">frontend/src/styles/_login.scss:1-91</span></li>
+    <li>Breakpoint y mixin <code>mobile</code>: <span class="ref">frontend/src/styles/_tokens.scss:44-51</span></li>
+    <li>Uso responsivo en shell: <span class="ref">frontend/src/styles/_shell.scss:166</span></li>
+    <li>Uso responsivo en componentes: <span class="ref">frontend/src/styles/_components.scss:715</span></li>
+  </ul>
+
+  <pre><code>// frontend/src/styles.scss:9-12
+@use 'tokens' as t;
+@use 'shell';
+@use 'components';
+@use 'login';</code></pre>
+
+  <h3>Parte visual del sistema</h3>
+
+  <figure class="shot">
+    <img src="../evidencias/02-dashboard-admin.png" alt="Panel principal de ColdTrace con KPIs y navegación" />
+    <figcaption>
+      <b>Figura 1.1.</b> Panel principal (<code>/dashboard</code>) tras autenticarse como ADMIN.
+      Se ven los KPIs calculados con datos de la API, las alertas térmicas y la tabla de últimos lotes.
+      Es la vista que demuestra la navegación por <b>Panel</b>, y desde el menú lateral se pasa a
+      <b>Lotes</b>, <b>Logística</b> y <b>Trazabilidad</b>.
+    </figcaption>
+  </figure>
+
+  <figure class="shot">
+    <img src="../evidencias/06-detalle-producto.png" alt="Detalle de producto en la ruta /productos/1" />
+    <figcaption>
+      <b>Figura 1.2.</b> Detalle de producto en la ruta <code>/productos/1</code>. Muestra la ficha del producto,
+      sus lotes asociados y el cumplimiento térmico. Es la evidencia de la ruta <code>/productos/:id</code>
+      declarada en <span class="ref">frontend/src/app/features/lots/lots.routes.ts:9</span>.
+    </figcaption>
+  </figure>
+
+  <h4>Navegación que conviene mostrar</h4>
+  <ol class="steps">
+    <li>Entrar como <b>admin</b> y quedar en <code>/dashboard</code>.</li>
+    <li>Recorrer el menú: <b>Panel principal → Lotes → Logística → Trazabilidad</b>.</li>
+    <li>En <b>Lotes</b>, pulsar <b>Ver</b> en un producto para abrir <code>/productos/:id</code>.</li>
+    <li>Señalar que el detalle lee el ID de la URL y no recibe el objeto por parámetro.</li>
+  </ol>
+
+  <ul>
+    <li>Menú lateral: <span class="ref">frontend/src/app/app.html:10-26</span></li>
+    <li>Botón “Ver” de la tabla: <span class="ref">frontend/src/app/features/lots/lots.component.ts:284</span></li>
+    <li>Navegación programática: <span class="ref">frontend/src/app/features/lots/lots.component.ts:515-517</span></li>
+  </ul>
+
+  <pre><code>// frontend/src/app/features/lots/lots.component.ts:515-517
+verDetalle(producto: { id: number }): void {
+  this.router.navigate(['/productos', producto.id]);
+}</code></pre>
+
+  <div class="qa">
+    <div class="q">¿Cómo pasas datos entre vistas?</div>
+    <div class="a">
+      <p>
+        El identificador viaja en la URL y se lee con <code>ActivatedRoute</code>; el estado compartido vive en un
+        store con <b>signals</b>. No se pasan objetos completos por parámetros de ruta.
+      </p>
+      <ul>
+        <li>Inyección de <code>ActivatedRoute</code>: <span class="ref">frontend/src/app/features/lots/producto-detalle.component.ts:96</span></li>
+        <li>Lectura del parámetro <code>:id</code>: <span class="ref">frontend/src/app/features/lots/producto-detalle.component.ts:125-134</span></li>
+        <li>Estado global con signals: <span class="ref">frontend/src/app/core/services/coldtrace-store.service.ts:20-28</span></li>
+        <li>Recarga y exposición de datos: <span class="ref">frontend/src/app/core/services/coldtrace-store.service.ts:34-90</span></li>
+        <li>Filtro derivado con <code>computed</code>: <span class="ref">frontend/src/app/features/lots/lots.component.ts:376-387</span></li>
+      </ul>
+      <pre><code>// frontend/src/app/features/lots/producto-detalle.component.ts:125-134
+ngOnInit(): void {
+  const id = Number(this.route.snapshot.paramMap.get('id'));
+  if (!Number.isInteger(id) || id &lt;= 0) {
+    this.error.set('El identificador del producto no es válido.');
+    this.cargando.set(false);
+    return;
+  }
+  this.productoId.set(id);
+  this.cargarProducto();
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <b>Precisión:</b> si en la exposición dices “6 rutas con guardas”, un jurado podría objetarlo.
+    Lo correcto es “<b>6 rutas de componente, 5 protegidas</b>; <code>/login</code> es pública”.
+  </div>
+</div>
+
+<!-- ===================== 2. FORMULARIOS ===================== -->
+<div class="section" id="s2">
+  <div class="section-head">
+    <div style="display:flex;align-items:flex-end;">
+      <div class="number">02</div>
+      <h2>Formularios</h2>
+    </div>
+    <div class="time">2 min</div>
+  </div>
+
+  <p class="lead">
+    Son formularios reactivos que sirven para registrar y para editar, porque el mismo formulario se reutiliza.
+    Tienen validaciones de campos requeridos, de formato (el código de lote con patrón) y de longitud; además,
+    una validación cruzada: la temperatura máxima debe ser mayor que la mínima.
+  </p>
+
+  <h3>Qué decir y dónde está en el código</h3>
+
+  <h4>Formularios reactivos</h4>
+  <ul>
+    <li>Importación de <code>ReactiveFormsModule</code>: <span class="ref">frontend/src/app/features/lots/lots.component.ts:4-11</span> y <span class="ref">:32</span></li>
+    <li>Login reactivo: <span class="ref">frontend/src/app/features/auth/login.component.ts:3</span> y <span class="ref">:13</span></li>
+    <li>Logística reactiva: <span class="ref">frontend/src/app/features/logistics/logistics.component.ts:3</span>, <span class="ref">:37</span> y <span class="ref">:135</span></li>
+  </ul>
+
+  <h4>El mismo formulario registra y edita</h4>
+  <ul>
+    <li>Título y endpoint cambian según <code>editandoId()</code>: <span class="ref">frontend/src/app/features/lots/lots.component.ts:52-56</span></li>
+    <li>El método elige <code>POST</code> o <code>PUT</code>: <span class="ref">frontend/src/app/features/lots/lots.component.ts:438-448</span></li>
+    <li>Carga los datos del producto en el mismo formulario: <span class="ref">frontend/src/app/features/lots/lots.component.ts:476-487</span></li>
+    <li>Cancela la edición y limpia el formulario: <span class="ref">frontend/src/app/features/lots/lots.component.ts:489-500</span></li>
+    <li>El texto del botón también cambia: <span class="ref">frontend/src/app/features/lots/lots.component.ts:135-137</span></li>
+  </ul>
+
+  <pre><code>// frontend/src/app/features/lots/lots.component.ts:445-448
+const datos = this.productoForm.getRawValue();
+const editando = this.editandoId();
+const peticion =
+  editando === null ? this.api.registrarProducto(datos) : this.api.actualizarProducto(editando, datos);</code></pre>
+
+  <h4>Validaciones de requeridos, formato y longitud</h4>
+  <table class="table">
+    <thead>
+      <tr><th>Formulario</th><th>Validaciones</th><th>Línea</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Producto</td>
+        <td><code>nombre</code> requerido, mínimo 3 y máximo 60; <code>tipo</code> requerido, mínimo 3 y máximo 40; temperaturas entre -60 y 40; vida útil entre 1 y 3650 días</td>
+        <td><span class="ref">lots.component.ts:389-398</span></td>
+      </tr>
+      <tr>
+        <td>Lote</td>
+        <td><code>codigo</code> requerido y con patrón <code>/^[A-Za-z0-9-]{3,20}$/</code>; fecha, estado y producto requeridos</td>
+        <td><span class="ref">lots.component.ts:400-405</span></td>
+      </tr>
+      <tr>
+        <td>Temperatura</td>
+        <td>Lote requerido; temperatura entre -60 y 40; ubicación máximo 40 caracteres</td>
+        <td><span class="ref">lots.component.ts:407-411</span></td>
+      </tr>
+      <tr>
+        <td>Login</td>
+        <td>Usuario requerido, mínimo 3 y máximo 30; contraseña requerida y mínimo 6</td>
+        <td><span class="ref">login.component.ts:69-72</span></td>
+      </tr>
+      <tr>
+        <td>Despacho</td>
+        <td>Manifiesto con patrón, lote, vehículo, conductor, pre-enfriamiento y destino</td>
+        <td><span class="ref">logistics.component.ts:304-311</span></td>
+      </tr>
+      <tr>
+        <td>Recepción</td>
+        <td>Operación, temperatura, logger, sellos, daño y firma</td>
+        <td><span class="ref">logistics.component.ts:313-320</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <pre><code>// frontend/src/app/features/lots/lots.component.ts:400-401
+readonly loteForm = this.fb.nonNullable.group({
+  codigo: ['', [Validators.required, Validators.pattern(/^[A-Za-z0-9-]{3,20}$/)]],</code></pre>
+
+  <h4>Validación cruzada del rango térmico</h4>
+  <ul>
+    <li>Función validadora: <span class="ref">frontend/src/app/features/lots/lots.component.ts:19-27</span></li>
+    <li>Se aplica al grupo completo: <span class="ref">frontend/src/app/features/lots/lots.component.ts:397</span></li>
+    <li>Se muestra en el campo de temperatura máxima: <span class="ref">frontend/src/app/features/lots/lots.component.ts:110-117</span></li>
+  </ul>
+
+  <pre><code>// frontend/src/app/features/lots/lots.component.ts:19-27
+function rangoTermico(grupo: AbstractControl): ValidationErrors | null {
+  const minima = grupo.get('temperaturaMinima')?.value;
+  const maxima = grupo.get('temperaturaMaxima')?.value;
+  if (minima === null || maxima === null || minima === '' || maxima === '') {
+    return null;
+  }
+  return Number(minima) &lt; Number(maxima) ? null : { rangoTermico: true };
+}</code></pre>
+
+  <h4>El botón queda deshabilitado</h4>
+  <p>
+    El formulario de producto usa <code>[disabled]="productoForm.invalid || guardando()"</code> en
+    <span class="ref">frontend/src/app/features/lots/lots.component.ts:135</span>. Si el nombre está vacío
+    o el rango térmico es inválido, el formulario queda inválido y el botón no se puede pulsar.
+  </p>
+
+  <pre><code>&lt;!-- frontend/src/app/features/lots/lots.component.ts:135 --&gt;
+&lt;button class="primary" type="submit" [disabled]="productoForm.invalid || guardando()"&gt;</code></pre>
+
+  <h3>Parte visual del sistema</h3>
+
+  <figure class="shot">
+    <img src="../evidencias/04-validaciones-formulario.png" alt="Validaciones del formulario de producto" />
+    <figcaption>
+      <b>Figura 2.1.</b> Formulario de producto con los errores visibles. La captura corresponde a la prueba
+      automatizada que deja el nombre vacío y pone una temperatura máxima menor que la mínima. Se ven los mensajes
+      de obligatorio, longitud y rango térmico, y el botón deshabilitado.
+    </figcaption>
+  </figure>
+
+  <figure class="shot">
+    <img src="../evidencias/07-edicion-producto.png" alt="Formulario reutilizado en modo edición" />
+    <figcaption>
+      <b>Figura 2.2.</b> El mismo formulario en modo edición. El encabezado cambia a “Editar producto” y el endpoint
+      mostrado es <code>PUT /api/productos/{id}</code>, pero los campos y las validaciones son los mismos que en el alta.
+    </figcaption>
+  </figure>
+
+  <h4>Guion de la demo</h4>
+  <ol class="steps">
+    <li>Entrar a <b>Lotes</b> con un usuario que pueda escribir.</li>
+    <li>Dejar el <b>nombre vacío</b> y salir del campo: aparece “El nombre es obligatorio”.</li>
+    <li>Escribir 2 caracteres: aparece “Mínimo 3 caracteres”.</li>
+    <li>Poner temperatura mínima <b>10</b> y máxima <b>5</b>: aparece “Debe ser mayor que la temperatura mínima”.</li>
+    <li>Señalar que el botón queda deshabilitado y que los dos errores pueden convivir.</li>
+  </ol>
+
+  <p class="small">
+    Este flujo está automatizado en <span class="ref">frontend/e2e/coldtrace.spec.ts:71-93</span>.
+  </p>
+
+  <div class="qa">
+    <div class="q">¿Por qué validar también en el servidor?</div>
+    <div class="a">
+      <p>
+        Porque una petición enviada directamente a la API se saltaría la interfaz. El backend debe proteger la regla
+        de negocio y responder con un error claro aunque el cliente no sea el Angular.
+      </p>
+      <ul>
+        <li>Validación en el servicio: <span class="ref">src/main/java/com/example/WebIntegrado/service/ProductoService.java:36-40</span> y <span class="ref">:59-63</span></li>
+        <li>Validaciones declarativas del modelo: <span class="ref">src/main/java/com/example/WebIntegrado/model/Producto.java:24-37</span></li>
+        <li>Respuesta 400 con mensaje de validación: <span class="ref">src/main/java/com/example/WebIntegrado/exception/GlobalExceptionHandler.java:27-34</span></li>
+        <li>Rango térmico inválido → 400: <span class="ref">src/main/java/com/example/WebIntegrado/exception/IllegalArgumentExceptionHandler.java:12-18</span></li>
+        <li>Prueba que demuestra el rechazo: <span class="ref">src/test/java/com/example/WebIntegrado/service/ProductoServiceTest.java:36-41</span></li>
+      </ul>
+      <pre><code>// ProductoService.java:59-63
+private void validarRango(Producto producto) {
+    if (producto.getTemperaturaMinima() &gt; producto.getTemperaturaMaxima()) {
+        throw new IllegalArgumentException("La temperatura minima no puede superar la maxima");
+    }
+}</code></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 3. CONSUMO REST ===================== -->
+<div class="section" id="s3">
+  <div class="section-head">
+    <div style="display:flex;align-items:flex-end;">
+      <div class="number">03</div>
+      <h2>Consumo de servicios REST</h2>
+    </div>
+    <div class="time">2 min</div>
+  </div>
+
+  <p class="lead">
+    Todo pasa por <code>HttpClient</code>. Un interceptor agrega el token a cada petición. Se usan los cuatro métodos:
+    <b>GET</b> para listar y consultar, <b>POST</b> para crear producto o despacho, <b>PUT</b> para editar producto y
+    recibir despacho, y <b>DELETE</b> para eliminar.
+  </p>
+
+  <h3>Qué decir y dónde está en el código</h3>
+
+  <ul>
+    <li>Servicio central de API: <span class="ref">frontend/src/app/core/services/coldtrace-api.service.ts:14-34</span></li>
+    <li>Inyección de <code>HttpClient</code> y base <code>/api</code>: <span class="ref">frontend/src/app/core/services/coldtrace-api.service.ts:16-17</span></li>
+    <li>Registro de <code>provideHttpClient</code> con interceptor: <span class="ref">frontend/src/app/app.config.ts:14</span></li>
+    <li>Proxy del frontend hacia el backend: <span class="ref">frontend/proxy.conf.json:1-7</span></li>
+  </ul>
+
+  <table class="table">
+    <thead>
+      <tr><th>Método</th><th>Operación</th><th>Línea exacta</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><span class="tag get">GET</span></td><td>Listar productos</td><td><span class="ref">coldtrace-api.service.ts:18</span></td></tr>
+      <tr><td><span class="tag get">GET</span></td><td>Consultar producto por ID</td><td><span class="ref">coldtrace-api.service.ts:19</span></td></tr>
+      <tr><td><span class="tag get">GET</span></td><td>Listar lotes</td><td><span class="ref">coldtrace-api.service.ts:23</span></td></tr>
+      <tr><td><span class="tag get">GET</span></td><td>Historial de temperaturas</td><td><span class="ref">coldtrace-api.service.ts:26</span></td></tr>
+      <tr><td><span class="tag get">GET</span></td><td>Listar operaciones</td><td><span class="ref">coldtrace-api.service.ts:28</span></td></tr>
+      <tr><td><span class="tag get">GET</span></td><td>Operaciones en tránsito</td><td><span class="ref">coldtrace-api.service.ts:30</span></td></tr>
+      <tr><td><span class="tag post">POST</span></td><td>Crear producto</td><td><span class="ref">coldtrace-api.service.ts:20</span></td></tr>
+      <tr><td><span class="tag post">POST</span></td><td>Crear lote</td><td><span class="ref">coldtrace-api.service.ts:24</span></td></tr>
+      <tr><td><span class="tag post">POST</span></td><td>Registrar temperatura</td><td><span class="ref">coldtrace-api.service.ts:27</span></td></tr>
+      <tr><td><span class="tag post">POST</span></td><td>Registrar despacho/operación</td><td><span class="ref">coldtrace-api.service.ts:29</span></td></tr>
+      <tr><td><span class="tag put">PUT</span></td><td>Editar producto</td><td><span class="ref">coldtrace-api.service.ts:21</span></td></tr>
+      <tr><td><span class="tag put">PUT</span></td><td>Registrar recepción</td><td><span class="ref">coldtrace-api.service.ts:31</span></td></tr>
+      <tr><td><span class="tag delete">DELETE</span></td><td>Eliminar producto</td><td><span class="ref">coldtrace-api.service.ts:22</span></td></tr>
+      <tr><td><span class="tag delete">DELETE</span></td><td>Eliminar lote</td><td><span class="ref">coldtrace-api.service.ts:25</span></td></tr>
+    </tbody>
+  </table>
+
+  <pre><code>// frontend/src/app/core/services/coldtrace-api.service.ts:18-22
+productos(): Observable&lt;Producto[]&gt; { return this.http.get&lt;Producto[]&gt;(`${this.base}/productos`); }
+buscarProducto(id: number): Observable&lt;Producto&gt; { return this.http.get&lt;Producto&gt;(`${this.base}/productos/${id}`); }
+registrarProducto(data: Omit&lt;Producto, 'id'&gt;): Observable&lt;Producto&gt; { return this.http.post&lt;Producto&gt;(`${this.base}/productos`, data); }
+actualizarProducto(id: number, data: Omit&lt;Producto, 'id'&gt;): Observable&lt;Producto&gt; { return this.http.put&lt;Producto&gt;(`${this.base}/productos/${id}`, data); }
+eliminarProducto(id: number): Observable&lt;void&gt; { return this.http.delete&lt;void&gt;(`${this.base}/productos/${id}`); }</code></pre>
+
+  <h4>Interceptor que agrega el token</h4>
+  <ul>
+    <li>Interceptor completo: <span class="ref">frontend/src/app/core/interceptors/auth.interceptor.ts:3-11</span></li>
+    <li>Excepción para <code>/api/auth</code>: <span class="ref">:4-6</span></li>
+    <li>Lectura del token: <span class="ref">:7</span></li>
+    <li>Cabecera <code>Authorization: Bearer</code>: <span class="ref">:9</span></li>
+    <li>Registro global: <span class="ref">frontend/src/app/app.config.ts:14</span></li>
+  </ul>
+
+  <pre><code>// frontend/src/app/core/interceptors/auth.interceptor.ts:3-11
+export const authInterceptor: HttpInterceptorFn = (req, next) =&gt; {
+  if (req.url.includes('/api/auth')) {
+    return next(req);
+  }
+  const token = localStorage.getItem('jwt');
+  if (token) {
+    req = req.clone({ setHeaders: { Authorization: `Bearer ${token}` } });
+  }
+  return next(req);
+};</code></pre>
+
+  <h3>Parte visual del sistema</h3>
+
+  <figure class="shot">
+    <img src="../evidencias/05-alta-producto.png" alt="Alta de producto con POST" />
+    <figcaption>
+      <b>Figura 3.1.</b> <b>POST.</b> Alta de un producto desde el formulario. El mensaje de éxito muestra el ID
+      generado por la API y la nueva fila aparece en la tabla de productos.
+    </figcaption>
+  </figure>
+
+  <figure class="shot">
+    <img src="../evidencias/07-edicion-producto.png" alt="Edición de producto con PUT" />
+    <figcaption>
+      <b>Figura 3.2.</b> <b>PUT.</b> Edición del mismo producto. El formulario se reutiliza, el encabezado indica
+      <code>PUT /api/productos/{id}</code> y la tabla refleja el nombre actualizado.
+    </figcaption>
+  </figure>
+
+  <figure class="shot">
+    <img src="../evidencias/08-eliminacion-producto.png" alt="Eliminación de producto con DELETE" />
+    <figcaption>
+      <b>Figura 3.3.</b> <b>DELETE.</b> Eliminación con confirmación del navegador. El producto desaparece de la
+      tabla y se muestra el mensaje de eliminación correcta.
+    </figcaption>
+  </figure>
+
+  <h4>Cómo mostrar la pestaña Red</h4>
+  <ol class="steps">
+    <li>Abrir <b>DevTools → Network</b> y filtrar por <code>Fetch/XHR</code>.</li>
+    <li>Crear un producto y seleccionar la petición <code>POST /api/productos</code>.</li>
+    <li>En <b>Request Headers</b>, señalar <code>Authorization: Bearer &lt;token&gt;</code>.</li>
+    <li>Explicar que el header lo agrega el interceptor en <span class="ref">auth.interceptor.ts:9</span> y que el backend lo valida en <span class="ref">JwtAuthFilter.java:31-34</span>.</li>
+  </ol>
+
+  <div class="qa">
+    <div class="q">¿Qué pasa si eliminas un producto que tiene lotes?</div>
+    <div class="a">
+      <p>
+        La API responde <b>409 Conflict</b> y la interfaz muestra un mensaje claro. La regla se valida en el
+        servicio antes de borrar: si el producto tiene lotes, no se elimina.
+      </p>
+      <ul>
+        <li>Validación explícita: <span class="ref">src/main/java/com/example/WebIntegrado/service/ProductoService.java:54-64</span></li>
+        <li>Traducción a 409: <span class="ref">src/main/java/com/example/WebIntegrado/exception/GlobalExceptionHandler.java:42-45</span></li>
+        <li>Mensaje en el frontend para 409: <span class="ref">frontend/src/app/features/lots/lots.component.ts:429-435</span></li>
+        <li>Pruebas: <span class="ref">ProductoServiceTest.rechazaEliminarProductoConLotes</span> y <span class="ref">SecurityIntegrationTest.adminNoPuedeEliminarProductoConLotes</span></li>
+      </ul>
+      <pre><code>// ProductoService.java:54-64
+@Transactional
+public void eliminar(Long id) {
+    Producto producto = buscarPorId(id);
+    if (loteRepository.existsByProductoId(id)) {
+        throw new IllegalStateException(
+                "No se puede eliminar el producto " + id + " porque tiene lotes asociados");
+    }
+    repository.delete(producto);
+}</code></pre>
+      <div class="callout tip">
+        <b>Estado actual:</b> el 409 es determinista para un producto con lotes. Ya no depende de que exista
+        una operación referenciando el lote.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 4. AUTENTICACIÓN ===================== -->
+<div class="section" id="s4">
+  <div class="section-head">
+    <div style="display:flex;align-items:flex-end;">
+      <div class="number">04</div>
+      <h2>Autenticación y autorización</h2>
+    </div>
+    <div class="time">2 min</div>
+  </div>
+
+  <p class="lead">
+    El login es un formulario en Angular. El token JWT se guarda en <code>localStorage</code> junto con el rol y se usa
+    en cada petición. La redirección depende del rol: <b>admin</b> y <b>user</b> van al panel; <b>guest</b> va a
+    <code>/lotes</code>.
+  </p>
+
+  <h3>Qué decir y dónde está en el código</h3>
+
+  <h4>Login en Angular</h4>
+  <ul>
+    <li>Plantilla: <span class="ref">frontend/src/app/features/auth/login.component.ts:13-57</span></li>
+    <li>Formulario reactivo: <span class="ref">frontend/src/app/features/auth/login.component.ts:69-72</span></li>
+    <li>Envío y manejo de error: <span class="ref">frontend/src/app/features/auth/login.component.ts:79-104</span></li>
+    <li>Endpoint backend: <span class="ref">src/main/java/com/example/WebIntegrado/controller/AuthController.java:59-67</span></li>
+    <li>Generación del JWT: <span class="ref">src/main/java/com/example/WebIntegrado/security/JwtUtil.java:27-36</span></li>
+  </ul>
+
+  <h4>Token JWT en localStorage</h4>
+  <ul>
+    <li>Guardado de token, usuario y rol: <span class="ref">frontend/src/app/core/services/auth.service.ts:25-29</span></li>
+    <li>Lectura del token: <span class="ref">frontend/src/app/core/services/auth.service.ts:38-40</span></li>
+    <li>Lectura del rol: <span class="ref">frontend/src/app/core/services/auth.service.ts:46-48</span></li>
+    <li>Cierre de sesión: <span class="ref">frontend/src/app/core/services/auth.service.ts:31-36</span></li>
+  </ul>
+
+  <pre><code>// frontend/src/app/core/services/auth.service.ts:25-29
+private guardarSesion(res: AuthResponse) {
+  localStorage.setItem('jwt', res.token);
+  localStorage.setItem('username', res.username);
+  localStorage.setItem('rol', res.rol);
+}</code></pre>
+
+  <h4>Uso del token en cada petición</h4>
+  <ul>
+    <li>Interceptor: <span class="ref">frontend/src/app/core/interceptors/auth.interceptor.ts:7-10</span></li>
+    <li>Validación en backend: <span class="ref">src/main/java/com/example/WebIntegrado/security/JwtAuthFilter.java:31-41</span></li>
+    <li>Matriz de permisos por URL: <span class="ref">src/main/java/com/example/WebIntegrado/security/SecurityConfig.java:32-37</span></li>
+  </ul>
+
+  <h4>Redirección según el rol</h4>
+  <ul>
+    <li>Regla de redirección: <span class="ref">frontend/src/app/core/services/auth.service.ts:54-57</span></li>
+    <li>Uso después del login: <span class="ref">frontend/src/app/features/auth/login.component.ts:90-94</span></li>
+  </ul>
+
+  <pre><code>// frontend/src/app/core/services/auth.service.ts:54-57
+get rutaInicio(): string {
+  return this.tieneRol('GUEST') ? '/lotes' : '/dashboard';
+}</code></pre>
+
+  <h3>Parte visual del sistema</h3>
+
+  <figure class="shot">
+    <img src="../evidencias/01-login.png" alt="Pantalla de login de ColdTrace" />
+    <figcaption>
+      <b>Figura 4.1.</b> Formulario de login. Muestra los usuarios de prueba y las validaciones de usuario y
+      contraseña. Es la única vista pública de la aplicación.
+    </figcaption>
+  </figure>
+
+  <figure class="shot">
+    <img src="../evidencias/03-login-error.png" alt="Error de credenciales inválidas" />
+    <figcaption>
+      <b>Figura 4.2.</b> Credenciales inválidas. El backend responde 401 y la interfaz muestra
+      “Credenciales inválidas” sin abandonar <code>/login</code>.
+    </figcaption>
+  </figure>
+
+  <figure class="shot">
+    <img src="../evidencias/10-rol-guest-solo-lectura.png" alt="Rol GUEST en modo solo lectura" />
+    <figcaption>
+      <b>Figura 4.3.</b> Sesión con rol <b>GUEST</b>. La redirección lleva a <code>/lotes</code>, se muestra el aviso
+      de solo lectura, no aparece el formulario de producto y el menú de Logística no está disponible. La tabla de
+      consulta sí se ve.
+    </figcaption>
+  </figure>
+
+  <h4>Guion de la demo</h4>
+  <ol class="steps">
+    <li>Entrar como <b>admin/admin123</b>: redirección a <code>/dashboard</code>.</li>
+    <li>Cerrar sesión y entrar como <b>guest/guest123</b>: redirección a <code>/lotes</code> y aviso de solo lectura.</li>
+    <li>Señalar que el enlace de Logística desaparece y que no hay formularios de escritura.</li>
+    <li>Volver al login y probar una clave incorrecta: aparece el mensaje de error.</li>
+  </ol>
+
+  <h4>Evidencia automatizada</h4>
+  <ul>
+    <li>Login ADMIN y redirección al panel: <span class="ref">frontend/e2e/coldtrace.spec.ts:41-59</span></li>
+    <li>Login GUEST, redirección a <code>/lotes</code> y ausencia de formularios: <span class="ref">frontend/e2e/coldtrace.spec.ts:168-180</span></li>
+    <li>Aviso de solo lectura: <span class="ref">frontend/src/app/features/lots/lots.component.ts:44-47</span></li>
+    <li>El formulario de producto se oculta si no puede escribir: <span class="ref">frontend/src/app/features/lots/lots.component.ts:52</span></li>
+    <li>El enlace de Logística se oculta: <span class="ref">frontend/src/app/app.html:17</span></li>
+    <li>Botones de eliminar reservados a ADMIN: <span class="ref">frontend/src/app/features/lots/lots.component.ts:288-295</span> y <span class="ref">:323</span>, <span class="ref">:340-344</span></li>
+  </ul>
+
+  <h4>Sin token y con credenciales malas</h4>
+  <ul>
+    <li><b>Credenciales malas:</b> mensaje <code>Credenciales inválidas.</code> en <span class="ref">frontend/src/app/features/auth/login.component.ts:95-101</span>.</li>
+    <li><b>Backend:</b> <code>BadCredentialsException</code> → 401 en <span class="ref">src/main/java/com/example/WebIntegrado/exception/GlobalExceptionHandler.java:22-25</span>.</li>
+    <li><b>Sin token en una ruta del frontend:</b> <code>authGuard</code> redirige a <code>/login</code> en <span class="ref">frontend/src/app/core/guards/auth.guard.ts:7-11</span>.</li>
+    <li><b>Sin token contra la API:</b> <code>SecurityConfig</code> exige autenticación en <span class="ref">src/main/java/com/example/WebIntegrado/security/SecurityConfig.java:32-37</span>.</li>
+  </ul>
+
+  <div class="callout warn">
+    <b>Precisión:</b> sin token no aparece un mensaje de error en pantalla; el guard redirige silenciosamente al
+    login. El mensaje visible aparece con credenciales inválidas. Conviene decirlo así.
+  </div>
+
+  <div class="qa">
+    <div class="q">¿Es seguro guardar el token en localStorage?</div>
+    <div class="a">
+      <p>
+        Es práctico para un avance, pero no es la opción más segura para producción. Cualquier script inyectado en
+        la página podría leer el token. En producción convendría usar cookies <code>HttpOnly</code> +
+        <code>Secure</code> + HTTPS, para que JavaScript no pueda leer el token y para reducir el riesgo de robo
+        por XSS.
+      </p>
+      <ul>
+        <li>Implementación actual: <span class="ref">frontend/src/app/core/services/auth.service.ts:26</span></li>
+        <li>API stateless: <span class="ref">src/main/java/com/example/WebIntegrado/security/SecurityConfig.java:31</span></li>
+        <li>Validación del token en cada request: <span class="ref">src/main/java/com/example/WebIntegrado/security/JwtAuthFilter.java:31-41</span></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 5. INTEGRACIÓN ===================== -->
+<div class="section" id="s5">
+  <div class="section-head">
+    <div style="display:flex;align-items:flex-end;">
+      <div class="number">05</div>
+      <h2>Integración técnica</h2>
+    </div>
+    <div class="time">1 min</div>
+  </div>
+
+  <p class="lead">
+    La API está desplegada en local con MySQL en Docker. El frontend envía y recupera datos, y las respuestas se ven
+    en tablas, tarjetas y listas. El despacho y la recepción de un lote demuestran el flujo completo: el despacho
+    aparece en “en tránsito” y pasa a “recepcionado”.
+  </p>
+
+  <h3>Qué decir y dónde está en el código</h3>
+
+  <h4>MySQL en Docker</h4>
+  <ul>
+    <li>Servicios Docker: <span class="ref">docker-compose.yml:1-34</span></li>
+    <li>MySQL 8.4: <span class="ref">docker-compose.yml:2-18</span></li>
+    <li>phpMyAdmin: <span class="ref">docker-compose.yml:20-31</span></li>
+    <li>Volumen persistente: <span class="ref">docker-compose.yml:12-13</span> y <span class="ref">:33-34</span></li>
+    <li>Perfil MySQL por defecto: <span class="ref">src/main/resources/application.yaml:5-9</span></li>
+    <li>Conexión JDBC: <span class="ref">src/main/resources/application-mysql.yaml:1-14</span></li>
+    <li>Puerto del backend: <span class="ref">src/main/resources/application.yaml:15-16</span></li>
+    <li>Alternativa sin Docker (H2): <span class="ref">src/main/resources/application-h2.yaml:1-15</span></li>
+    <li>Datos iniciales (3 productos, 3 lotes, 3 lecturas y usuarios): <span class="ref">src/main/java/com/example/WebIntegrado/config/DatosIniciales.java:34-60</span></li>
+  </ul>
+
+  <pre><code># src/main/resources/application-mysql.yaml:2-7
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/coldtrace?createDatabaseIfNotExist=true&amp;useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=UTC
+    username: coldtrace
+    password: coldtrace123
+    driver-class-name: com.mysql.cj.jdbc.Driver</code></pre>
+
+  <h4>Frontend y backend conectados</h4>
+  <ul>
+    <li>Proxy <code>/api</code> → <code>http://localhost:8080</code>: <span class="ref">frontend/proxy.conf.json:1-7</span></li>
+    <li>Servicio HTTP: <span class="ref">frontend/src/app/core/services/coldtrace-api.service.ts:14-34</span></li>
+    <li>Store que carga y comparte los datos: <span class="ref">frontend/src/app/core/services/coldtrace-store.service.ts:34-90</span></li>
+  </ul>
+
+  <h4>Las respuestas se ven en tablas, tarjetas y listas</h4>
+  <ul>
+    <li>Tarjetas KPI del panel: <span class="ref">frontend/src/app/features/dashboard/dashboard.component.ts:23-44</span></li>
+    <li>Tabla de últimos lotes: <span class="ref">frontend/src/app/features/dashboard/dashboard.component.ts:83-115</span></li>
+    <li>Tabla de productos: <span class="ref">frontend/src/app/features/lots/lots.component.ts:258-305</span></li>
+    <li>Tabla de lotes: <span class="ref">frontend/src/app/features/lots/lots.component.ts:307-355</span></li>
+    <li>Tabla de despachos en tránsito: <span class="ref">frontend/src/app/features/logistics/logistics.component.ts:210-242</span></li>
+    <li>Tabla de operaciones registradas: <span class="ref">frontend/src/app/features/logistics/logistics.component.ts:245-285</span></li>
+  </ul>
+
+  <h4>Despacho y recepción</h4>
+  <ul>
+    <li>Formulario de despacho: <span class="ref">frontend/src/app/features/logistics/logistics.component.ts:33-130</span></li>
+    <li>Método que registra el despacho (<code>POST</code>): <span class="ref">frontend/src/app/features/logistics/logistics.component.ts:336-381</span></li>
+    <li>Formulario de recepción: <span class="ref">frontend/src/app/features/logistics/logistics.component.ts:132-205</span></li>
+    <li>Método que registra la recepción (<code>PUT</code>): <span class="ref">frontend/src/app/features/logistics/logistics.component.ts:383-421</span></li>
+    <li>La tabla “Despachos en tránsito” filtra por <code>EN_TRANSITO</code>: <span class="ref">frontend/src/app/features/logistics/logistics.component.ts:300-302</span></li>
+    <li>El estado se pinta como “En tránsito” o “Recepcionado”: <span class="ref">frontend/src/app/features/logistics/logistics.component.ts:270-275</span></li>
+    <li>Mensaje de éxito del cambio de estado: <span class="ref">frontend/src/app/features/logistics/logistics.component.ts:401-405</span></li>
+  </ul>
+
+  <p><b>Backend:</b></p>
+  <ul>
+    <li><code>POST /api/operaciones</code>: <span class="ref">src/main/java/com/example/WebIntegrado/controller/OperacionController.java:54-59</span></li>
+    <li><code>PUT /api/operaciones/{id}/recepcion</code>: <span class="ref">src/main/java/com/example/WebIntegrado/controller/OperacionController.java:61-66</span></li>
+    <li>El despacho nace <code>EN_TRANSITO</code>: <span class="ref">src/main/java/com/example/WebIntegrado/service/OperacionService.java:38-45</span></li>
+    <li>La recepción valida el estado y lo pasa a <code>RECEPCIONADO</code>: <span class="ref">src/main/java/com/example/WebIntegrado/service/OperacionService.java:47-72</span></li>
+  </ul>
+
+  <pre><code>// OperacionService.java:51-55
+if (!"EN_TRANSITO".equals(operacion.getEstado())) {
+    throw new IllegalStateException("El despacho " + operacion.getManifiesto() + " ya fue recepcionado");
+}
+
+operacion.setEstado("RECEPCIONADO");</code></pre>
+
+  <h3>Parte visual del sistema</h3>
+
+  <figure class="shot">
+    <img src="../evidencias/09-despacho-logistico.png" alt="Despacho logístico registrado en tránsito" />
+    <figcaption>
+      <b>Figura 5.1.</b> <b>Despacho.</b> Tras el <code>POST /api/operaciones</code>, el registro aparece en la tabla
+      “Despachos en tránsito” con estado <b>En tránsito</b>. Se ven manifiesto, tipo, inspector, fecha y estado.
+    </figcaption>
+  </figure>
+
+  <figure class="shot">
+    <img src="../evidencias/12-recepcion.png" alt="Recepción de un despacho y cambio a recepcionado" />
+    <figcaption>
+      <b>Figura 5.2.</b> <b>Recepción.</b> El <code>PUT /api/operaciones/{id}/recepcion</code> registra la auditoría
+      de llegada y el despacho pasa de <b>En tránsito</b> a <b>Recepcionado</b>. La tabla de operaciones muestra el
+      estado final y los controles confirmados.
+    </figcaption>
+  </figure>
+
+  <figure class="shot">
+    <img src="../evidencias/11-trazabilidad.png" alt="Reporte de trazabilidad con telemetría simulada" />
+    <figcaption>
+      <b>Figura 5.3.</b> <b>Trazabilidad.</b> Línea de recorrido, telemetría de temperatura y ficha del lote.
+      La lectura “en vivo” que avanza cada 2 segundos es una <b>simulación en el cliente</b>, no una lectura real
+      del backend.
+    </figcaption>
+  </figure>
+
+  <div class="callout tip">
+    <b>Aclaración que conviene adelantar:</b> la telemetría de tránsito se simula en el cliente. El timer está en
+    <span class="ref">frontend/src/app/features/traceability/trace-report.component.ts:243</span> (cada 2000 ms).
+    La lógica de ruido, reversión a la media y picos está en <span class="ref">:271-312</span>, y las lecturas
+    “en vivo” se agregan solo en memoria en <span class="ref">:303-311</span>.
+  </div>
+
+  <pre><code>// frontend/src/app/features/traceability/trace-report.component.ts:243
+this.simulacion = setInterval(() =&gt; this.avanzarSimulacion(), 2000);</code></pre>
+
+  <h4>Guion de la demo</h4>
+  <ol class="steps">
+    <li>Entrar a <b>Logística</b> como admin o user.</li>
+    <li>Registrar un despacho con manifiesto, lote, vehículo, conductor, pre-enfriamiento y destino.</li>
+    <li>Señalar la fila nueva en <b>Despachos en tránsito</b>.</li>
+    <li>Ir a la recepción, elegir ese manifiesto y registrar temperatura, logger, sellos y firma.</li>
+    <li>Volver a la tabla de operaciones y mostrar el cambio a <b>Recepcionado</b>.</li>
+    <li>Entrar a <b>Trazabilidad</b> y aclarar que la curva “en vivo” es simulada en el frontend.</li>
+  </ol>
+
+  <div class="qa">
+    <div class="q">¿De dónde salen los datos que se ven al iniciar?</div>
+    <div class="a">
+      <p>
+        De un sembrado inicial que se ejecuta solo si la tabla <code>producto</code> está vacía. Crea 3 productos,
+        3 lotes, 3 lecturas y las operaciones de ejemplo, además de los usuarios de prueba.
+      </p>
+      <p class="small">
+        <span class="ref">src/main/java/com/example/WebIntegrado/config/DatosIniciales.java:34-60</span>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 6. PRUEBAS Y DOCUMENTACIÓN ===================== -->
+<div class="section" id="s6">
+  <div class="section-head">
+    <div style="display:flex;align-items:flex-end;">
+      <div class="number">06</div>
+      <h2>Pruebas y documentación</h2>
+    </div>
+    <div class="time">1 min</div>
+  </div>
+
+  <p class="lead">
+    Hay pruebas de navegador con Playwright, pruebas de backend con JUnit, el informe técnico con las capturas y el
+    repositorio en GitHub. El resultado de las pruebas se puede mostrar desde el reporte HTML o ejecutando
+    <code>npm run e2e</code>.
+  </p>
+
+  <h3>Qué decir y dónde está en el código</h3>
+
+  <h4>Playwright</h4>
+  <ul>
+    <li>Configuración: <span class="ref">frontend/playwright.config.ts:1-31</span></li>
+    <li>Directorio de pruebas: <span class="ref">frontend/playwright.config.ts:11</span></li>
+    <li>Arranque automático del frontend: <span class="ref">frontend/playwright.config.ts:25-30</span></li>
+    <li>Script <code>npm run e2e</code>: <span class="ref">frontend/package.json:10</span></li>
+  </ul>
+
+  <table class="table">
+    <thead>
+      <tr><th>#</th><th>Prueba funcional</th><th>Línea</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>Login ADMIN redirige al panel principal con KPIs de la API</td><td><span class="ref">frontend/e2e/coldtrace.spec.ts:41</span></td></tr>
+      <tr><td>2</td><td>Credenciales inválidas muestran mensaje de error en el login</td><td><span class="ref">frontend/e2e/coldtrace.spec.ts:61</span></td></tr>
+      <tr><td>3</td><td>Validaciones de formulario: requerido, longitud y rango térmico</td><td><span class="ref">frontend/e2e/coldtrace.spec.ts:71</span></td></tr>
+      <tr><td>4</td><td>Flujo CRUD completo: alta, detalle, edición y eliminación</td><td><span class="ref">frontend/e2e/coldtrace.spec.ts:95</span></td></tr>
+      <tr><td>5</td><td>Registrar despacho logístico y verlo en tránsito</td><td><span class="ref">frontend/e2e/coldtrace.spec.ts:147</span></td></tr>
+      <tr><td>6</td><td>Rol GUEST: redirección a lotes y solo lectura</td><td><span class="ref">frontend/e2e/coldtrace.spec.ts:168</span></td></tr>
+    </tbody>
+  </table>
+
+  <p>
+    Además existe <b>1 prueba de capturas</b> para trazabilidad y recepción:
+    <span class="ref">frontend/e2e/capturas-informe.spec.ts:33-75</span>.
+  </p>
+
+  <div class="callout warn">
+    <b>Precisión:</b> <code>npm run e2e</code> ejecuta <b>7 tests</b> (6 funcionales + 1 de capturas).
+    Si quieres sostener “6 de 6”, ejecuta solo el archivo funcional:
+    <code>npx playwright test e2e/coldtrace.spec.ts</code>, o di “6 pruebas funcionales, más 1 de capturas”.
+  </div>
+
+  <h4>JUnit</h4>
+  <table class="table">
+    <thead>
+      <tr><th>Test</th><th>Archivo</th><th>Línea</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Registra producto válido</td><td><span class="ref">src/test/java/com/example/WebIntegrado/service/ProductoServiceTest.java</span></td><td><span class="ref">:25-34</span></td></tr>
+      <tr><td>Rechaza rango de temperatura inválido</td><td><span class="ref">src/test/java/com/example/WebIntegrado/service/ProductoServiceTest.java</span></td><td><span class="ref">:36-41</span></td></tr>
+      <tr><td>Registra operación y asigna fecha</td><td><span class="ref">src/test/java/com/example/WebIntegrado/service/OperacionServiceTest.java</span></td><td><span class="ref">:27-38</span></td></tr>
+      <tr><td>Lista productos con 200 OK</td><td><span class="ref">src/test/java/com/example/WebIntegrado/controller/ProductoControllerTest.java</span></td><td><span class="ref">:34-41</span></td></tr>
+      <tr><td>Carga el contexto con perfil H2</td><td><span class="ref">src/test/java/com/example/WebIntegrado/WebIntegradoApplicationTests.java</span></td><td><span class="ref">:11-13</span></td></tr>
+    </tbody>
+  </table>
+
+  <p>Comando: <code>.\mvnw.cmd test</code></p>
+
+  <h3>Parte visual del sistema</h3>
+
+  <figure class="shot">
+    <img src="../evidencias/13-reporte-playwright.png" alt="Reporte HTML de Playwright con las pruebas aprobadas" />
+    <figcaption>
+      <b>Figura 6.1.</b> Reporte HTML de Playwright. Se ven las 6 pruebas funcionales de
+      <code>coldtrace.spec.ts</code> y la prueba de capturas de <code>capturas-informe.spec.ts</code>.
+      El reporte marca <b>7 aprobadas</b> en total; si la exposición exige “6 de 6”, hay que ejecutar solo el archivo
+      funcional y explicarlo.
+    </figcaption>
+  </figure>
+
+  <figure class="shot">
+    <img src="../evidencias/14-informe-tecnico.png" alt="Portada del informe técnico de ColdTrace" />
+    <figcaption>
+      <b>Figura 6.2.</b> Portada del informe técnico en PDF. El documento completo incluye arquitectura, capturas,
+      consumo de la API, validaciones y problemas de integración.
+    </figcaption>
+  </figure>
+
+  <h4>Documentación entregada</h4>
+  <ul>
+    <li>PDF: <span class="ref">docs/reporte/Informe-Tecnico-ColdTrace.pdf</span></li>
+    <li>HTML fuente del informe: <span class="ref">docs/reporte/informe.html</span></li>
+    <li>Informe de cumplimiento de requerimientos: <span class="ref">docs/INFORME-AVANCE.md</span></li>
+    <li>Índice y explicación de capturas: <span class="ref">docs/evidencias/README.md</span></li>
+    <li>Capturas: <span class="ref">docs/evidencias/01-login.png</span> … <span class="ref">12-recepcion.png</span></li>
+    <li>Guion de exposición por requerimiento: <span class="ref">docs/INFORME-EXPOSICION.md</span></li>
+    <li>Repositorio GitHub: <span class="ref">README.md:6</span> · <a href="https://github.com/MrFenix27/ProyectoIntegradorWeb">github.com/MrFenix27/ProyectoIntegradorWeb</a></li>
+  </ul>
+
+  <h4>Cómo mostrar el resultado de <code>npm run e2e</code></h4>
+  <pre><code>cd proyectointegradorfabiano\frontend
+npm run e2e
+npm run e2e:report</code></pre>
+  <ul>
+    <li>Script: <span class="ref">frontend/package.json:10</span></li>
+    <li>Reporte HTML: <span class="ref">frontend/playwright-report/index.html</span></li>
+    <li>Abrir el reporte: <code>npm run e2e:report</code> (<span class="ref">frontend/package.json:11</span>)</li>
+    <li>Requisito previo: backend corriendo en <code>http://localhost:8080</code> (<span class="ref">frontend/playwright.config.ts:25-30</span>)</li>
+  </ul>
+</div>
+
+<!-- ===================== ANEXO ===================== -->
+<div class="section" id="anexo">
+  <div class="section-head">
+    <div style="display:flex;align-items:flex-end;">
+      <div class="number">07</div>
+      <h2>Precisiones y comandos</h2>
+    </div>
+    <div class="time">Anexo</div>
+  </div>
+
+  <h3>Cuatro precisiones para no afirmar algo incorrecto</h3>
+
+  <div class="callout warn">
+    <b>1. “6 rutas con guardas”</b><br />
+    Son 6 rutas de componente y 5 protegidas; <code>/login</code> es pública.
+  </div>
+
+  <div class="callout warn">
+    <b>2. “Sin token aparece el error”</b><br />
+    Sin token el guard redirige a <code>/login</code>; el mensaje visible aparece con credenciales inválidas.
+  </div>
+
+  <div class="callout tip">
+    <b>3. “Eliminar producto con lotes da 409”</b><br />
+    Ya es correcto: <span class="ref">ProductoService.eliminar</span> valida los lotes y
+    <span class="ref">GlobalExceptionHandler</span> responde 409.
+  </div>
+
+  <div class="callout warn">
+    <b>4. “Playwright 6 de 6”</b><br />
+    Son 6 pruebas funcionales y 1 de capturas; <code>npm run e2e</code> corre 7. Para mostrar exactamente 6:
+    <code>npx playwright test e2e/coldtrace.spec.ts</code>.
+  </div>
+
+  <h3>Comandos de arranque para la demo</h3>
+  <pre><code># 1) Base de datos
+cd proyectointegradorfabiano
+docker compose up -d
+
+# 2) Backend (terminal 1)
+.\mvnw.cmd spring-boot:run
+
+# 3) Frontend (terminal 2)
+cd frontend
+npm start
+
+# 4) Pruebas backend
+cd ..
+.\mvnw.cmd test
+
+# 5) Pruebas E2E (con backend corriendo)
+cd frontend
+npm run e2e</code></pre>
+
+  <h3>Checklist de 60 segundos antes de exponer</h3>
+  <ul>
+    <li>MySQL levantado: <code>docker compose up -d</code>.</li>
+    <li>Backend respondiendo en <code>http://localhost:8080</code>.</li>
+    <li>Frontend en <code>http://localhost:4200/login</code>.</li>
+    <li>Sesión cerrada o en el usuario que corresponde al inicio de la demo.</li>
+    <li>Pestaña <b>Network</b> de DevTools lista para mostrar el <code>Bearer</code>.</li>
+    <li>Capturas del informe abiertas en <code>docs/evidencias/</code>.</li>
+    <li>Tener claro que la telemetría de tránsito es simulada en el cliente.</li>
+  </ul>
+
+  <div class="footer-note">
+    <b>ColdTrace</b> · Guion de exposición con evidencia visual · Documento generado a partir del repositorio
+    <code>ProyectoIntegradorWeb</code> y de las capturas de <code>docs/evidencias/</code>.
+  </div>
+</div>
+
+</body>
+</html>

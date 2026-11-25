@@ -26,6 +26,7 @@ navegador nunca llama a otro origen y no hay problemas de CORS en desarrollo.
 | `npm run build` | Build de producción en `dist/frontend` |
 | `npm run e2e` | Pruebas de navegador Playwright + capturas en `../docs/evidencias` |
 | `npm run e2e:report` | Abre el reporte HTML de la última ejecución |
+| `npm run guion` | Genera el guion de exposición con capturas en `docs/reporte/Guion-Exposicion-ColdTrace.pdf` |
 | `npm test` | Pruebas unitarias (Vitest) |
 
 ## Estructura por módulos

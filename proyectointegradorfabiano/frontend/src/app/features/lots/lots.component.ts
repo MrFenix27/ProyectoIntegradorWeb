@@ -143,7 +143,10 @@ function rangoTermico(grupo: AbstractControl): ValidationErrors | null {
     <!-- ===================== Lote + temperatura ===================== -->
     <div class="operation-columns" *ngIf="auth.puedeEscribir">
       <section class="panel operation-card">
-        <header><h2>Registrar lote</h2><span>POST /api/lotes</span></header>
+        <header>
+          <h2>{{ editandoLoteId() ? 'Editar lote #' + editandoLoteId() : 'Registrar lote' }}</h2>
+          <span>{{ editandoLoteId() ? 'PUT /api/lotes/' + editandoLoteId() : 'POST /api/lotes' }}</span>
+        </header>
         <form class="form-content" [formGroup]="loteForm" (ngSubmit)="registrarLote()" novalidate>
           <label>
             Código del lote
@@ -197,7 +200,12 @@ function rangoTermico(grupo: AbstractControl): ValidationErrors | null {
             </small>
           </label>
 
-          <button class="primary" type="submit" [disabled]="loteForm.invalid || guardando()">Registrar lote</button>
+          <div class="table-actions">
+            <button class="primary" type="submit" [disabled]="loteForm.invalid || guardando()">
+              {{ editandoLoteId() ? 'Guardar cambios' : 'Registrar lote' }}
+            </button>
+            <button type="button" *ngIf="editandoLoteId()" (click)="cancelarEdicionLote()">Cancelar</button>
+          </div>
         </form>
       </section>
 
@@ -320,7 +328,7 @@ function rangoTermico(grupo: AbstractControl): ValidationErrors | null {
               <th>ESTADO</th>
               <th>RANGO PERMITIDO</th>
               <th>ÚLTIMA LECTURA</th>
-              <th class="right" *ngIf="auth.esAdmin">ACCIONES</th>
+              <th class="right" *ngIf="auth.puedeEscribir">ACCIONES</th>
             </tr>
           </thead>
           <tbody>
@@ -337,14 +345,17 @@ function rangoTermico(grupo: AbstractControl): ValidationErrors | null {
               </td>
               <td>{{ lote.producto.temperaturaMinima }}°C a {{ lote.producto.temperaturaMaxima }}°C</td>
               <td>{{ fecha(lote) }}</td>
-              <td *ngIf="auth.esAdmin">
+              <td *ngIf="auth.puedeEscribir">
                 <div class="table-actions">
-                  <button type="button" class="danger" (click)="eliminarLote(lote)">Eliminar</button>
+                  <button type="button" (click)="editarLote(lote)">Editar</button>
+                  <button type="button" class="danger" *ngIf="auth.esAdmin" (click)="eliminarLote(lote)">
+                    Eliminar
+                  </button>
                 </div>
               </td>
             </tr>
             <tr *ngIf="!lotesVisibles().length">
-              <td [attr.colspan]="auth.esAdmin ? 7 : 6" class="empty">
+              <td [attr.colspan]="auth.puedeEscribir ? 7 : 6" class="empty">
                 No hay lotes que coincidan con la búsqueda.
               </td>
             </tr>
@@ -369,6 +380,7 @@ export class LotsComponent {
   readonly filtro = toSignal(this.ui.search$, { initialValue: '' });
 
   readonly editandoId = signal<number | null>(null);
+  readonly editandoLoteId = signal<number | null>(null);
   readonly mensaje = signal('');
   readonly error = signal(false);
   readonly guardando = signal(false);
@@ -525,26 +537,53 @@ export class LotsComponent {
     }
 
     const datos = this.loteForm.getRawValue();
+    const editando = this.editandoLoteId();
+    const payload = {
+      codigo: datos.codigo,
+      fechaVencimiento: datos.fechaVencimiento,
+      estado: datos.estado,
+      producto: { id: datos.productoId },
+    };
+    const peticion =
+      editando === null ? this.api.registrarLote(payload) : this.api.actualizarLote(editando, payload);
+
     this.guardando.set(true);
-    this.api
-      .registrarLote({
-        codigo: datos.codigo,
-        fechaVencimiento: datos.fechaVencimiento,
-        estado: datos.estado,
-        producto: { id: datos.productoId },
-      })
-      .subscribe({
-        next: (resultado) => {
-          this.guardando.set(false);
-          this.mostrarExito(`Lote ${resultado.codigo} registrado correctamente con ID ${resultado.id}.`);
-          this.loteForm.reset({ codigo: '', fechaVencimiento: '', estado: 'ACTIVO', productoId: 0 });
-          this.store.recargar();
-        },
-        error: (err) => {
-          this.guardando.set(false);
-          this.mostrarError(this.mensajeError(err));
-        },
-      });
+    peticion.subscribe({
+      next: (resultado) => {
+        this.guardando.set(false);
+        this.mostrarExito(
+          editando === null
+            ? `Lote ${resultado.codigo} registrado correctamente con ID ${resultado.id}.`
+            : `Lote ${resultado.codigo} actualizado correctamente.`
+        );
+        this.loteForm.reset({ codigo: '', fechaVencimiento: '', estado: 'ACTIVO', productoId: 0 });
+        this.editandoLoteId.set(null);
+        this.store.recargar();
+      },
+      error: (err) => {
+        this.guardando.set(false);
+        this.mostrarError(this.mensajeError(err));
+      },
+    });
+  }
+
+  editarLote(lote: Lote): void {
+    this.editandoLoteId.set(lote.id);
+    this.loteForm.setValue({
+      codigo: lote.codigo,
+      fechaVencimiento: lote.fechaVencimiento,
+      estado: lote.estado,
+      productoId: lote.producto.id,
+    });
+    this.loteForm.markAsPristine();
+    this.mostrarExito(`Editando el lote #${lote.id}. Modifica los datos y guarda los cambios.`);
+  }
+
+  cancelarEdicionLote(): void {
+    this.editandoLoteId.set(null);
+    this.loteForm.reset({ codigo: '', fechaVencimiento: '', estado: 'ACTIVO', productoId: 0 });
+    this.mensaje.set('');
+    this.error.set(false);
   }
 
   eliminarLote(lote: Lote): void {
@@ -552,6 +591,7 @@ export class LotsComponent {
 
     this.api.eliminarLote(lote.id).subscribe({
       next: () => {
+        if (this.editandoLoteId() === lote.id) this.cancelarEdicionLote();
         this.mostrarExito(`Lote "${lote.codigo}" eliminado.`);
         this.store.recargar();
       },

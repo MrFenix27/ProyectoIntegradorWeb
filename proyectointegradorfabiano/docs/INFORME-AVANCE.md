@@ -2,7 +2,7 @@
 
 **Proyecto:** ColdTrace / WebIntegrado (`proyectointegradorfabiano/`)
 **Fecha de verificación:** 13-oct-2026 — Backend `http://localhost:8080` (OK) + Frontend `http://localhost:4200` (HTTP 200)
-**Compilación:** `mvnw compile` OK · **Tests:** 5/5 OK (`BUILD SUCCESS`) · **Front:** `ng build` OK
+**Compilación:** `mvnw compile` OK · **Tests:** 10/10 OK (`BUILD SUCCESS`) · **Front:** `ng build` OK
 **Colección Postman:** `docs/ColdTrace.postman_collection.json` (16 peticiones)
 **Nota técnica:** la base de datos es **MySQL 8.4** (contenedor `coldtrace-mysql`, perfil por defecto `mysql`). El perfil `h2` se mantiene para correr sin Docker; en Spring Boot 4.x la consola H2 no viene auto-configurada y se registra manual en `config/H2ConsoleConfig.java` (solo con perfil `h2`).
 **Usuarios de prueba:** `admin/admin123` (ADMIN) · `user/user123` (USER) · `guest/guest123` (GUEST)
@@ -70,7 +70,7 @@
 # ANEXO — Requerimientos técnicos del avance (Frontend Angular)
 
 **Verificado el:** 13-nov-2026 · **Backend:** Spring Boot 4.1.1 en `localhost:8080` · **Frontend:** Angular 22 en `localhost:4200`
-**Pruebas de navegador:** 6/6 OK (`npm run e2e`) · **Tests backend:** 5/5 OK · **Build producción:** OK
+**Pruebas de navegador:** 6 funcionales + 1 de capturas, 7/7 OK (`npm run e2e`) · **Tests backend:** 10/10 OK · **Build producción:** OK
 
 ## Veredicto: SÍ CUMPLE
 
@@ -91,7 +91,7 @@
 | 5.1 | API desplegada (local) | ✅ | Spring Boot en `http://localhost:8080` sobre **MySQL 8.4** (Docker), con datos sembrados y persistencia verificada entre reinicios |
 | 5.2 | Comunicación front ↔ back | ✅ | Verificado en vivo: login 200, GET 200, POST 201, PUT 200, DELETE 204, sin token 403 |
 | 5.3 | Respuestas en tablas, listas o tarjetas | ✅ | Tablas de productos, lotes, operaciones y lecturas; tarjetas KPI en el dashboard |
-| 6.1 | Pruebas de funcionalidad desde el navegador | ✅ | `frontend/e2e/coldtrace.spec.ts` (Playwright, 6 pruebas): login OK, login inválido, validaciones, CRUD completo, despacho y rol GUEST |
+| 6.1 | Pruebas de funcionalidad desde el navegador | ✅ | `frontend/e2e/coldtrace.spec.ts` (Playwright, 6 pruebas funcionales) + `frontend/e2e/capturas-informe.spec.ts` (1 prueba de capturas): login OK, login inválido, validaciones, CRUD completo, despacho y rol GUEST |
 | 6.2 | Evidencia del flujo (login, registro, consulta, edición, eliminación) | ✅ | 10 capturas en `docs/evidencias/` (ver `docs/evidencias/README.md`) |
 | 6.3 | Documentación | ✅ | Este informe, `INFORME-EXPOSICION.md`, `APF1-COLDTRACE.md`, colección Postman y `docs/evidencias/README.md` |
 
@@ -113,4 +113,19 @@
 4. **Logística:** registrar un despacho y recepcionarlo (PUT).
 5. **Trazabilidad:** seleccionar el lote en tránsito y ver el gráfico en vivo.
 6. Cerrar sesión y entrar con `guest/guest123`: redirección a `/lotes` en modo solo lectura.
+
+---
+
+## Actualización — mejoras de consistencia (15-nov-2026)
+
+| Mejora | Evidencia |
+|---|---|
+| **409 real al eliminar un producto con lotes** | `LoteRepository.existsByProductoId`, `ProductoService.eliminar`, `ProductoServiceTest.rechazaEliminarProductoConLotes` y `SecurityIntegrationTest.adminNoPuedeEliminarProductoConLotes` |
+| **Edición de lotes en la interfaz** | `ColdtraceApiService.actualizarLote`, `LotsComponent.editarLote`, `cancelarEdicionLote` y botón **Editar** en la tabla de lotes |
+| **401 para token ausente/inválido y 403 para rol insuficiente** | `RestAuthenticationEntryPoint`, `RestAccessDeniedHandler` y `SecurityConfig.exceptionHandling` |
+| **Cierre de sesión automático ante 401** | `frontend/src/app/core/interceptors/error.interceptor.ts` registrado en `app.config.ts` |
+| **Pruebas de seguridad** | `SecurityIntegrationTest`: sin token 401, GUEST GET 200/POST 403, USER DELETE 403, ADMIN DELETE con lotes 409 |
+| **Conteo de pruebas actualizado** | Backend: **10/10** · E2E: **7/7** (6 funcionales + 1 capturas) |
+
+> Nota: el test E2E del panel ya no exige exactamente 3 lotes; valida que el KPI muestre un número real de la API. Así funciona también cuando MySQL conserva datos de demostraciones anteriores.
 

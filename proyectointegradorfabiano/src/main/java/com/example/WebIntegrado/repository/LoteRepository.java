@@ -11,6 +11,9 @@ import com.example.WebIntegrado.model.Lote;
 
 public interface LoteRepository extends JpaRepository<Lote, Long> {
 
+    // Consulta derivada: evita borrar un producto que todavía tiene lotes.
+    boolean existsByProductoId(Long productoId);
+
     // JPQL: filtrar por estado
     @Query("SELECT l FROM Lote l WHERE l.estado = :estado")
     List<Lote> buscarPorEstado(@Param("estado") String estado);

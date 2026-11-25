@@ -22,6 +22,7 @@ export class ColdtraceApiService {
   eliminarProducto(id: number): Observable<void> { return this.http.delete<void>(`${this.base}/productos/${id}`); }
   lotes(): Observable<Lote[]> { return this.http.get<Lote[]>(`${this.base}/lotes`); }
   registrarLote(data: NuevoLote): Observable<Lote> { return this.http.post<Lote>(`${this.base}/lotes`, data); }
+  actualizarLote(id: number, data: NuevoLote): Observable<Lote> { return this.http.put<Lote>(`${this.base}/lotes/${id}`, data); }
   eliminarLote(id: number): Observable<void> { return this.http.delete<void>(`${this.base}/lotes/${id}`); }
   temperaturas(id: number): Observable<Temperatura[]> { return this.http.get<Temperatura[]>(`${this.base}/lotes/${id}/temperaturas`); }
   registrarTemperatura(loteId: number, data: NuevaTemperatura): Observable<Temperatura> { return this.http.post<Temperatura>(`${this.base}/lotes/${loteId}/temperaturas`, data); }

@@ -475,24 +475,6 @@ button:disabled,
   cursor: pointer;
 }
 
-.quick-scan {
-  border: 1px solid t.$line;
-  padding: 12px;
-  display: grid;
-  grid-template-columns: 32px auto;
-  gap: 4px 10px;
-
-  span {
-    grid-row: span 2;
-    color: t.$primary;
-    font-size: 30px;
-  }
-
-  small {
-    color: t.$muted;
-  }
-}
-
 // Mensajes de validación por campo (formularios reactivos)
 .field-error {
   color: t.$danger;

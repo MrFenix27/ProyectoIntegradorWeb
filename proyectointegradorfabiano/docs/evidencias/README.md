@@ -20,6 +20,8 @@ Las imágenes se regeneran en cada ejecución de `npm run e2e` (carpeta `fronten
 | `10-rol-guest-solo-lectura.png` | Usuario GUEST redirigido a `/lotes`, sin formularios de escritura ni módulo de logística | 4.3 |
 | `11-trazabilidad.png` | Reporte de trazabilidad con línea de recorrido, telemetría en vivo y ficha del lote | 1.1, 5.3 |
 | `12-recepcion.png` | `PUT /api/operaciones/{id}/recepcion`: el despacho pasa de “En tránsito” a “Recepcionado” con su auditoría | 3.3, 5.3 |
+| `13-reporte-playwright.png` | Reporte HTML de Playwright con las 6 pruebas funcionales y la prueba de capturas aprobadas | 6.1, 6.2 |
+| `14-informe-tecnico.png` | Portada del informe técnico en PDF, con la identificación del proyecto y el stack | 6.1, 6.2 |
 
 ## Cómo reproducirlas
 

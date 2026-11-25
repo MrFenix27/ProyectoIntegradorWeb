@@ -130,7 +130,7 @@ import { Lote, Operacion, Temperatura } from '../../shared/models/domain.models'
           >{{ ultima() ? (ultimaFueraDeRango() ? 'Fuera de rango' : 'En rango') : 'Sin lectura' }}</span>
           <p>Ubicación: <b>{{ ultima()?.ubicacion || 'No registrada' }}</b></p>
           <hr />
-          <b>Lecturas registradas: {{ registros().length }}</b>
+          <b>Lecturas registradas: {{ lecturasGrafico().length }}</b>
         </article>
 
         <article class="panel manifest">
