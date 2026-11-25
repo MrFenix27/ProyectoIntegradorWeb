@@ -1,0 +1,37 @@
+# Build / artefactos
+target/
+build/
+out/
+*.class
+*.jar
+*.war
+
+# Frontend (no forma parte de la imagen del backend)
+frontend/
+node_modules/
+
+# Git / IDE
+.git/
+.gitignore
+.idea/
+.vscode/
+*.iml
+
+# Docs y evidencias (no necesarias en runtime)
+docs/
+*.md
+!README.md
+
+# Docker / infra local
+docker-compose.yml
+Dockerfile
+.dockerignore
+
+# Secretos
+.env
+.env.*
+!.env.example
+
+# Sistema
+.DS_Store
+Thumbs.db

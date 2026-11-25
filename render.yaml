@@ -1,0 +1,36 @@
+# Blueprint de Render para el backend Spring Boot (ColdTrace).
+# Ubicacion: raiz del repositorio GitHub (junto a la carpeta del proyecto).
+# Uso: Render Dashboard -> New -> Blueprint -> seleccionar este repo.
+#
+# Los valores marcados con `sync: false` NO se guardan en el repo:
+# se cargan manualmente en el panel de Render.
+services:
+  - type: web
+    name: coldtrace-api
+    runtime: docker
+    plan: free
+    # Cambia la region si tu proyecto de Supabase esta en otra zona.
+    region: virginia
+    rootDir: proyectointegradorfabiano
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /actuator/health
+    autoDeploy: true
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        sync: false
+      - key: ALLOW_VERCEL_PREVIEWS
+        value: "true"
+      - key: DB_POOL_MAX
+        value: "5"
+      - key: JAVA_TOOL_OPTIONS
+        value: "-XX:MaxRAMPercentage=75 -XX:+UseSerialGC"
